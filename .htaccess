@@ -1,0 +1,8 @@
+Options -Indexes
+RewriteEngine on
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^(.*)$ $1.php
+RewriteRule ^([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)$ index.php?app=$1&action=$2 [QSA]
+RewriteRule ^([a-zA-Z0-9_-]+)$ index.php?app=$1 [QSA]
+DirectoryIndex index.php?app=top&action=redirector

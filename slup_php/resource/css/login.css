@@ -1,0 +1,24 @@
+@CHARSET "UTF-8";
+/*----ログイン画面----*/
+#login_main{
+	height:550px;
+	padding:10px;
+}
+	#login_main .login_table_left{
+		float:left;
+		width:350px;
+		height:300px;
+	}
+	#login_main .login_table_right{
+		float:left;
+		margin-left:15px;
+		width:500px;
+	}
+		#login_main table{
+			background-color:#ffffff;
+			width:99%;
+		}
+#login_footer{
+	clear:both;
+	border-top:1px solid #BBBBBB;
+}
