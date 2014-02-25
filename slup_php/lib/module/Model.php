@@ -35,7 +35,9 @@ abstract class Model implements ModelRunnable{
 		$model=new $class();
 		if($data!==null){
 			foreach ($list as $key => $value){
-				call_user_func_array(array($model,"set"),array($key,$data[$value[self::valueIndex]]));
+				if(isset($data[$value[self::valueIndex]])){
+					call_user_func_array(array($model,"set"),array($key,$data[$value[self::valueIndex]]));
+				}
 			}
 		}else{
 			if(($column=static::getColumn())===null){
@@ -228,6 +230,7 @@ abstract class Model implements ModelRunnable{
 				static::runValidation($name,$param, $value);
 				$model->set($name, $value);
 			}
+			$model->set(static::parseFormName($name),static::generateForm($name, $param, $model));
 		}
 		/**
 		 * バリデーションを実行
@@ -248,6 +251,22 @@ abstract class Model implements ModelRunnable{
 				}
 			}
 		}
+		
+		/**
+		 * 
+		 * @param string $name
+		 * @param string $param
+		 * @param string $model
+		 * @return mixed|NULL
+		 */
+		protected static function generateForm($name,$param,$model){
+			if(isset($param[self::formIndex])){
+				return call_user_func_array(array("HtmlHelper",self::formIndex),array(static::parseFormName($name),$param,$model));
+			}else{
+				return null;
+			}
+		}
+		
 		
 		/**
 		 * @see ModelRunnable
@@ -443,7 +462,9 @@ abstract class Model implements ModelRunnable{
 		$value=substr((md5(date("YmdD His"))),0,10);
 		HtmlHelper::setSessionParam(static::getSecurityKeyName().self::sessionSecurity_value, $value);
 		HtmlHelper::setSessionParam(static::getSecurityKeyName().self::sessionSecurity_time,strtotime($time));
-		$model->set(self::security, $value);
+		$model->set(self::security,$value);
+		$model->set($model->parseFormName(self::security),
+			HtmlHelper::text($model->parseFormName(self::security), $value,array(ModelRunnable::formType=>"hidden")));
 	}
 
 

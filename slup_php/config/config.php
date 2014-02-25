@@ -18,6 +18,10 @@
 		 * @var string
 		 */
 		const systemMailAdd="sohara_contact9022@jcom.home.ne.jp";
+		/**
+		 * url for redurect.
+		 */
+		const redirectUrl="";
 		
 		/**
 		 * auth parameter.
@@ -89,6 +93,7 @@
 			public static function getImagePath();
 			public static function getExtLibPath();
 			public static function getImageSavePath();
+			
 			/**
 			 * Get host.
 			 * ホストを取得
@@ -276,6 +281,39 @@
 				}
 				return false;
 			}
+			/**
+			 * 通常アクセスへリダイレクト
+			 */
+			public static function redirectHost(){
+				header("Location: ".AppConfig::getHost().self::redirectUrl."?".self::getRedirectIndex()."=".$this->createRedirectCode());
+				exit();
+			}
+				/**
+				 * 暗号化したGetIndexを生成
+				 * @return string
+				 */
+				protected static function getRedirectIndex(){
+					return substr((md5($_SERVER['HTTP_USER_AGENT'])), 0, 10);
+				}
+				protected static function createRedirectCode(){
+					static::includeModel(array("redirector"));
+					$redirectCode=md5(strtotime("now").$_SERVER['HTTP_USER_AGENT'].HtmlHelper::getEscapeSessionId());
+					$model=new Redirector();
+					$model->setId($redirectCode);
+					$model->setSessionId(HtmlHelper::getEscapeSessionId());
+					$model->setDate(strtotime("20 second"));
+					$model->insert($this->getDB(self::basicDbIndex), $model);
+					return $redirectCode;
+				}
+			
+			/**
+			 * redirect ro ssl.
+			 */
+			public static function redirectSsl(){
+				header("Location: ".AppConfig::getSslHost().self::redirectUrl);
+				exit();
+			}
+			
 			
 			public static function init(){
 				date_default_timezone_set('Asia/Tokyo');

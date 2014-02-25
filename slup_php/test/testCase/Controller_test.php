@@ -68,6 +68,9 @@
 		//セッションを登録,SetupSessionData セッション有
 		public function testRegisterSessionUser(){
 			//id fraud.
+			$list=Sl_user::getColumnArray();
+			$list[Sl_user::password][ModelRunnable::findIndex]=true;
+			Sl_user::setColumnArray($list);
 			$this->app->setUser_test(new Sl_user());
 			$this->app->getUser()->set(Sl_user::id, "-1");
 			$this->app->getUser()->set(Sl_user::password, TestUser::testPasswordValue);
@@ -184,18 +187,16 @@
 	
 		public function testGetActionForm(){
 			$this->app->setUser_test(new Sl_user());
-			Sl_user::setupSecurity("5 minute", $this->app->getUser());
+		#	Sl_user::setupSecurity(($time="5 minute"), $this->app->getUser());
 			$this->getControl()->equals(htmlspecialchars(
-				$this->app->getActionForm("test" ,"login","POST","",$this->app->getUser()),ENT_QUOTES,AppConfig::character),
+				$this->app->getActionForm("test" ,"login","POST","",$this->app->getUser(),($time="5 minute")),ENT_QUOTES,AppConfig::character),
 				htmlspecialchars("<form name=\"test\" action=\"".AppConfig::$appHomeFromBrowserPath.$this->app->getControllerName().CommonResources::slash."login\" method=\"POST\" >".
-					HtmlHelper::input("hidden",Sl_user::parseFormName(Model::security),
-					$this->app->getUser()->get(ModelRunnable::security),""),ENT_QUOTES,AppConfig::character));
+					HtmlHelper::text(Sl_user::parseFormName(Model::security),$this->app->getUser()->get(ModelRunnable::security),array(ModelRunnable::formType=>"hidden")),ENT_QUOTES,AppConfig::character));
 			$this->getControl()->equals(htmlspecialchars(
-				$this->app->getActionForm("test" ,null,"GET","id='login'",$this->app->getUser()),ENT_QUOTES,AppConfigRunnable::character),
+				$this->app->getActionForm("test" ,null,"GET","id='login'",$this->app->getUser(),$time),ENT_QUOTES,AppConfigRunnable::character),
 				htmlspecialchars("<form name=\"test\" action=\"".AppConfig::$appHomeFromBrowserPath.$this->app->getControllerName().CommonResources::slash.
 					"\" method=\"GET\" id='login'>".
-					HtmlHelper::input("hidden",Sl_user::parseFormName(Model::security),
-					$this->app->getUser()->get(ModelRunnable::security),""),ENT_QUOTES,AppConfig::character));
+					HtmlHelper::text(Sl_user::parseFormName(Model::security), $this->app->getUser()->get(ModelRunnable::security), array(ModelRunnable::formType=>"hidden")),ENT_QUOTES,AppConfig::character));
 			$_SESSION=array();
 			//$this->app->setSecurityKey(null);
 		}
@@ -204,6 +205,9 @@
 		public function exitTest(){
 			unset($_GET[AppConfigRunnable::appAccessIndex]);
 			$this->app->exitSession();
+			$list=Sl_user::getColumnArray();
+			$list[Sl_user::password][ModelRunnable::findIndex]=false;
+			Sl_user::setColumnArray($list);
 		}
 		
 		public function testGetExetension() {

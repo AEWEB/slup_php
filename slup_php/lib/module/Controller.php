@@ -334,10 +334,11 @@ abstract class Controller implements ControllerRunnable{
 	/**
 	 * @see ControllerRunnable::getActionForm()
 	 */
-	public function getActionForm($name,$callMethod,$method,$option,$model){
+	public function getActionForm($name,$callMethod,$method,$option,$model,$time){
 		$url=HtmlHelper::getActionUrl(static::getControllerName(), $callMethod);
 		$tag=HtmlHelper::form($name, $url, $method, $option);
-		return $tag.HtmlHelper::input("hidden",$model::parseFormName(ModelRunnable::security),$model->get(ModelRunnable::security),"");
+		$model->setupSecurity($time, $model);
+		return $tag.$model->get($model->parseFormName(ModelRunnable::security));
 	}
 	/**
 	 * @see ControllerRunnable::getAjaxActionForm()

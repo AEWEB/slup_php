@@ -6,25 +6,40 @@ class Sl_user extends Model{
 	const restriction="restriction";
 	const date="date";
 	const mid="m_id";
-	const device="device";
+	const device="device";	
 
+	const minLenId=3;
+	const maxLenId=20;
+	const minLenPassword=4;
+	const maxLenPassword=20;
+	const minLenM_id=5;
+	const maxLenM_id=80;
+	
+	
 	/**
 	 * @var SlUser
 	 */
 	private static $list=array(
-		self::id=>array(self::valueIndex=>"sl_id"),
-		self::name=>array(self::valueIndex=>"sl_name"),
-		self::imageurl=>array(self::valueIndex=>"sl_imageurl"),
-		self::password=>array(self::valueIndex=>"sl_password"),
-		self::restriction=>array(self::valueIndex=>"sl_restriction"),
-		self::date=>array(self::valueIndex=>"sl_date"),
-		self::mid=>array(self::valueIndex=>"sl_m_id"),
-		self::device=>array(self::valueIndex=>"sl_device"));
+		self::id=>array(self::valueIndex=>"sl_id",self::findIndex=>true,self::updateIndex=>false,self::typeIndex=>self::validation_ctypeAlnum_bar,
+			self::outputIndex=>ModelResource::sl_user_id,self::numMinIndex=>self::minLenId,self::numMaxIndex=>self::maxLenId),
+		self::name=>array(self::valueIndex=>"sl_name",self::findIndex=>true),
+		self::imageurl=>array(self::valueIndex=>"sl_imageurl",self::findIndex=>true),
+		self::password=>array(self::valueIndex=>"sl_password",self::typeIndex=>self::validation_ctypeAlnum,
+			self::outputIndex=> ModelResource::sl_user_password,self::numMinIndex=>self::minLenPassword,self::numMaxIndex=>self::maxLenPassword),
+		self::restriction=>array(self::valueIndex=>"sl_restriction",self::findIndex=>true),
+		self::date=>array(self::valueIndex=>"sl_date",self::updateIndex=>false),
+		self::mid=>array(self::valueIndex=>"sl_m_id",self::typeIndex=>self::validation_mailAdd,self::updateIndex=>false,
+			self::outputIndex=> ModelResource::sl_user_m_id,self::numMinIndex=>self::minLenM_id,self::numMaxIndex=>self::maxLenM_id),
+		self::device=>array(self::valueIndex=>"sl_device",self::findIndex=>true));	
 	
 	private static $column=null;
 
 	public static function getColumnArray(){
 		return self::$list;
+	}
+	public static function setColumnArray($list){
+		self::$list=$list;
+		self::$column=null;
 	}
 	public static function getColumn(){
 		return self::$column;
@@ -58,6 +73,8 @@ class Sl_user extends Model{
 		$columnModel=static::createModel();
 		return static::findByIdSession($db, $id,SqlSyntax::getAnd().$columnModel->get(self::password).CommonResources::equal.CommonResources::quote.$password.CommonResources::quote);
 	}
+	
+	
 	
 }
 ?>

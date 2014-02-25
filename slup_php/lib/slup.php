@@ -212,6 +212,7 @@ interface ModelRunnable{
 	const valueIndex="value";
 	const findIndex="find";
 	const updateIndex="update";
+	
 	/**
 	 * Store the flag of whether require.
 	 * 必須項目かどうかのフラグを格納
@@ -246,6 +247,19 @@ interface ModelRunnable{
 	
 	
 	const findColumnKey="findColumn_key";
+	
+	/**
+	 * index for storing method to run.
+	 */
+	const formIndex="form";
+	/**
+	 * index for storing form option.
+	 */
+	const formType="form_type";
+	const formCols="form_cols";
+	const formRows="form_rows";
+	const formList="form_list";
+	const formIndexOption="form_option";
 	
 	/**
 	 * Session index for security.
@@ -590,9 +604,10 @@ interface ControllerRunnable extends DBController{
 	 * @param $method HTTP method
 	 * @param $option other.
 	 * @param $model ModelRunnable
+	 * @param $time String
 	 * @return string
 	 */
-	 public function getActionForm($name,$callMethod,$method,$option,$model);
+	 public function getActionForm($name,$callMethod,$method,$option,$model,$time);
 	 /**
 	 * action form for ajax.
 	 * @param ModelRunnable $model

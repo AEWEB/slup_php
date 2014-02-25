@@ -78,6 +78,11 @@ interface CommonResources{
 	const andSql="and";
 	const orSql="or";
 }
+interface ModelResource{
+	const sl_user_id="ID";
+	const sl_user_password="パスワード";
+	const sl_user_m_id="メールアドレス";
+}
 class ErrorMessage{
 	/**
 	 * if greater than the maximum value.

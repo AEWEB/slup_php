@@ -17,13 +17,6 @@ class HtmlHelper{
 	const form_sexMan="0";
 	const form_sexWoman="1";
 
-	/**
-	 * index for form list.
-	 * @var int
-	 */
-	const formList_selectIndex=0;
-	const formList_directIndex=1;
-
 
 	/**
 	 * Generate form.
@@ -39,54 +32,41 @@ class HtmlHelper{
 	/**
 	 * Generate input tag.
 	 * インプットタグを生成
-	 * @param string $type input type.
 	 * @param string $name input name.
 	 * @param string $value value.
 	 * @param string $option other.
 	 * @return string
 	 */
-	public static function input($type,$name,$value,$option){
-		return "<input type=\"".$type."\" name=\"".$name."\" value=\"".$value."\" ".$option.">";
-	}
-	/**
-	 * Generate detailed input tag.
-	 * 詳細なインプットタグを生成
-	 * @param string $type input type.
-	 * @param string $name input name.
-	 * @param string $size display size.
-	 * @param string $max_length character length.
-	 * @param string $value value.
-	 * @param string $option other.
-	 * @return string
-	 */
-	public static function text(
-			$type,$name,$size,$max_length,$value,$option){
-		return $this->generateInput($type, $name, $value,
-				"size=\"".$size."\" maxlength=".$max_length." ".$option);
+	public static function text($name,$value,$option){
+		return "<input type=\"".(isset($option[ModelRunnable::formType]) ? $option[ModelRunnable::formType]:"text").
+			"\" name=\"".$name."\" value=\"".$value."\" ".
+			(isset($option[ModelRunnable::numMaxIndex]) ? 
+				"size=\"".$option[ModelRunnable::numMaxIndex].
+				"\" maxlength=\"".$option[ModelRunnable::numMaxIndex]."\" ":CommonResources::nullCharacter).
+			(isset($option[ModelRunnable::formIndexOption]) ? $option[ModelRunnable::formIndexOption]:CommonResources::nullCharacter).">";
 	}
 	/**
 	 * Generate text tag.
-	 * @param string $name
-	 * @param string_type $cols
-	 * @param string_type $rows
-	 * @param string $value
-	 * @param string $option
+	  * @param string $name input name.
+	 * @param string $value value.
+	 * @param string $option other.
 	 * @return string
 	 */
-	public static function textArea($name,$cols,$rows,$value,$option){
-		return "<textarea cols=\"".$cols."\" rows=\"".$rows.
-		"\" name=\"".$name."\" ".$option.">".$value."</textarea>";
+	public static function textArea($name,$value,$option){
+		return "<textarea cols=\"".(isset($option[ModelRunnable::formCols]) ? $option[ModelRunnable::formCols]:"5").
+			"\" rows=\"".(isset($option[ModelRunnable::formRows]) ? $option[ModelRunnable::formRows]:"10").
+			"\" name=\"".$name."\" ".
+			(isset($option[ModelRunnable::formIndexOption]) ? $option[ModelRunnable::formIndexOption]:CommonResources::nullCharacter).">".$value."</textarea>";
 	}
 	/**
 	 * Generate radio input tag.
-	 * @param string[][] $list
-	 * @param string $value
-	 * @param string $formName
-	 * @param string $header
-	 * @param string $footer
+	  * @param string $name input name.
+	 * @param string $value value.
+	 * @param string $option other.
 	 * @return string
 	 */
-	public static function radio($list,$value,$formName,$header,$footer){
+	public static function radio($name,$value,$option,$header,$footer){
+		$list=$option[ModelRunnable::formList];
 		$tag=$header;
 		for($i=0;$i<count($list);$i++){
 			$checked=CommonResources::nullCharacter;
@@ -121,7 +101,7 @@ class HtmlHelper{
 	 * @param string $option
 	 * @return string
 	 */
-	public static function select($list,$value,$name,$option){
+	public static function select($name,$value,$option){
 		$select="<select name=\"".$name."\" ".$option.">";
 		for($i=0;$i<count($list);$i++){
 			$selected=CommonResources::nullCharacter;
