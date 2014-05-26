@@ -1,0 +1,2 @@
+<a class="medium blue_e awesome" href="<?php print(HtmlHelper::getActionUrl("top","reissueId")); ?>">ID再通知</a>
+<a class="medium blue_e awesome" href="<?php print(HtmlHelper::getActionUrl("top","reissuePassword")); ?>">パスワード再設定</a>

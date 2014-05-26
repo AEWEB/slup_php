@@ -9,6 +9,15 @@
 		public static function getMockPath(){
 			return "mock/";
 		}
+		public static function redirectHost($db){
+			self::clearHttps();
+		}
+		public static function setupHttps(){
+			$_SERVER['HTTPS']="on";
+		}
+		public static function clearHttps(){
+			$_SERVER['HTTPS']="off";
+		}
 	}
 	AppConfig::$config=new AppConfigTest();
 	require_once AppConfigTest::getLibPath()."Lftest.php";
@@ -17,11 +26,13 @@
 	require_once AppConfigTest::getConfigPath()."database.php";
 	require_once AppConfigTest::getResourcePath()."resource.php";
 	AppConfigTest::includeModel(array("Sl_user"));
+	require_once AppConfigTest::getAppPath()."applicationBase.php";
+	//require_once AppConfigTest::getAppPath()."top.php";
 	interface TestUser{
 		const id="sample";
 		const testPasswordValue="test";
 		const testMailValue="test@sl.jp";
-		const testMailValue2="expsei@inter7.jp";
+		const testMailValue2="expsei2@inter7.jp";
 	}
 	class My_sample_datas extends Model{
 		
@@ -72,6 +83,13 @@
 		}
 		public static function getSecurityKeyName_test(){
 			return static::getSecurityKeyName();
+		}
+		
+		public static function generateForm_test($name,$param,$model){
+			return static::generateForm($name, $param, $model);
+		}
+		public static function setSessionParamFlag($flag){
+			static::$sessionParamFlag=$flag;
 		}
 		
 		

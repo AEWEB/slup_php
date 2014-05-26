@@ -20,54 +20,52 @@ class Model_test extends Lf_testCase{
 		$this->getControl()->equalsNull($this->frameControl->error);
 	}
 	public function testFind(){
-		$columnModel=My_sample_datas::createModel();
-		$model=My_sample_datas::find($this->db,$columnModel->get(My_sample_datas::id)."='".My_sample_datas::idValue."'");
+		$model=My_sample_datas::find($this->db,My_sample_datas::createModel(array(My_sample_datas::id=>My_sample_datas::idValue)));
 		$this->getControl()->equals(count($model),1);
 		$this->getControl()->equals($model[0]->get(My_sample_datas::id),My_sample_datas::idValue);
 		$this->getControl()->equals($model[0]->get(My_sample_datas::name),My_sample_datas::nameValue);
 		$this->getControl()->equals($model[0]->get(My_sample_datas::mail),My_sample_datas::mailValue);
 		$this->getControl()->equals($model[0]->get(My_sample_datas::tel),My_sample_datas::telValue);
 	}
+	public function testFindByCount(){
+		$count=My_sample_datas::findByCount($this->db, My_sample_datas::createModel(array()));
+		$model=My_sample_datas::find($this->db,My_sample_datas::createModel(array()));
+		$this->getControl()->equals(count($model),(int)$count);
+		$this->getControl()->equals(1,(int)My_sample_datas::findByCount($this->db,
+			My_sample_datas::createModel(array(My_sample_datas::id=>My_sample_datas::idValue)),array(DBDriver::queryOptionIndex_projection=>My_sample_datas::createModel()->get(My_sample_datas::id))));
+	}
+	
 
 	public function testInsert(){
 		$model=new My_sample_datas();
-		$model->set(My_sample_datas::id, null);
-		$model->set(My_sample_datas::name, My_sample_datas::nameValue);
-		$model->set(My_sample_datas::mail, My_sample_datas::mailValue);
-		$model->set(My_sample_datas::tel, My_sample_datas::telValue);
-		My_sample_datas::insert($this->db, $model);		
-		$columnModel=My_sample_datas::createModel();
-		$id=$this->db->getLastInsertId($model);
-		$model=My_sample_datas::find($this->db,$columnModel->get(My_sample_datas::id)."='".$id."'");
+		$this->getControl()->equalsTrue(My_sample_datas::insert($this->db, My_sample_datas::createModel(array(
+			My_sample_datas::name=>My_sample_datas::nameValue,
+			My_sample_datas::mail=>My_sample_datas::mailValue,
+			My_sample_datas::tel=>My_sample_datas::telValue))));		
+		$id=$this->db->getLastInsertId(My_sample_datas::createModel());
+		$model=My_sample_datas::find($this->db,My_sample_datas::createModel(array(My_sample_datas::id=>$id)));
 		$this->getControl()->equals(intval($model[0]->get(My_sample_datas::id)),$id);
 		$this->getControl()->equals($model[0]->get(My_sample_datas::name),My_sample_datas::name);
 		$this->getControl()->equals($model[0]->get(My_sample_datas::mail),My_sample_datas::mail);
 		$this->getControl()->equals($model[0]->get(My_sample_datas::tel),My_sample_datas::tel);
 	}
-	
 	public function testUpdate(){
 		$this->db->startTransaction();
-		$model=new My_sample_datas();
-		$model->set(My_sample_datas::id,My_sample_datas::idValue);
-		$model->set(My_sample_datas::name,My_sample_datas::nameValue);
-		$model->set(My_sample_datas::mail,"update");
-		$model->set(My_sample_datas::tel,My_sample_datas::telValue);
-		My_sample_datas::save($this->db, $model);
-		$columnModel=My_sample_datas::createModel();
-		$model=My_sample_datas::findBy($this->db,My_sample_datas::id, My_sample_datas::idValue);
+		$this->getControl()->equalsTrue(My_sample_datas::save($this->db,My_sample_datas::createModel(array(My_sample_datas::id=>My_sample_datas::idValue,
+			My_sample_datas::name=>My_sample_datas::nameValue,My_sample_datas::mail=>"update",My_sample_datas::tel=>My_sample_datas::telValue))));
+		$model=My_sample_datas::find($this->db,My_sample_datas::createModel(array(My_sample_datas::id=>My_sample_datas::idValue)));
 		$this->getControl()->equals($model[0]->get(My_sample_datas::mail),"update");
 		$this->db->rollback();
 	}
 	public function testDelete(){
 		$this->db->startTransaction();
-		$columnModel=My_sample_datas::createModel();
-		$model=new My_sample_datas();
-		$model->set(My_sample_datas::id,My_sample_datas::idValue);
-		$model->delete($this->db, $model);
-		$model=My_sample_datas::findBy($this->db,My_sample_datas::id, My_sample_datas::idValue);
+		My_sample_datas::delete($this->db,My_sample_datas::createModel(array(My_sample_datas::id=>My_sample_datas::idValue)));
+		$model=My_sample_datas::find($this->db, My_sample_datas::createModel(array(My_sample_datas::id=>My_sample_datas::idValue)));
 		$this->getControl()->equals(count($model),0);
 		$this->db->rollback();
 	}
+	
+
 	public function testIsNumber(){
 		$param=array(ModelRunnable::numMinIndex=>10,
 			ModelRunnable::numMaxIndex=>20);
@@ -149,6 +147,7 @@ class Model_test extends Lf_testCase{
 		$this->getControl()->equalsNull(Model::isValidation_url("http://localhost/",$param));
 		$this->getControl()->equals(Model::isValidation_url("exp.sei16@gmail.com",$param),CommonResources::validationErrorUrl);
 	}
+
 	/**
 	 *  setupSecurity
 	 */
@@ -158,6 +157,8 @@ class Model_test extends Lf_testCase{
 		$this->getControl()->equals(Model::isValidation_security($model->get(Model::security)."test",null),CommonResources::securityErrorMessage);
 		//値が一致
 		$this->getControl()->equalsNull(Model::isValidation_security($model->get(Model::security),null));
+		//二回目以降のため不正となる
+		$this->getControl()->equals(Model::isValidation_security($model->get(Model::security),null),CommonResources::securityErrorMessage);
 		$this->resetForm();
 		//時間が不正
 		Model::setupSecurity("-5 minute",$model);
@@ -170,6 +171,12 @@ class Model_test extends Lf_testCase{
 		unset($_SESSION[My_sample_datas::getSecurityKeyName_test().ModelRunnable::sessionSecurity_time]);
 		$this->getControl()->equals(Model::isValidation_security($model->get(Model::security),null),CommonResources::securityErrorMessage);
 		$this->resetForm();
+		//フラグを元に戻す
+		My_sample_datas::setSessionParamFlag(false);
+		Model::setupSecurity("5 minute",($model=new My_sample_datas()));
+		$this->getControl()->equalsNull(Model::isValidation_security($model->get(Model::security),false));
+		$this->resetForm();
+		My_sample_datas::setSessionParamFlag(false);
 	}
 	
 	/**
@@ -221,6 +228,20 @@ class Model_test extends Lf_testCase{
 		$this->getControl()->equals(Model::isErrorItem($errorItem2),false);
 		$this->getControl()->equals(Model::getErrorMessage(),$output.ErrorMessage::getCheckMinLength(10)."<br/>".$output2.CommonResources::validationErrorCtypeAlnum);
 		$this->resetForm();
+	}
+	
+	public function testGenerateForm(){
+		$model=new My_sample_datas();
+		$value="values_a";
+		$model->set(My_sample_datas::id,$value);
+		$this->getControl()->equals(htmlspecialchars(HtmlHelper::text("my_sample_datas_id",$value, 
+			array()),ENT_QUOTES,AppConfig::character),				
+			htmlspecialchars(My_sample_datas::generateForm_test("id", array(ModelRunnable::formIndex=>"text"),$model)
+			,ENT_QUOTES,AppConfig::character));
+		$this->getControl()->equals(htmlspecialchars(HtmlHelper::textArea("my_sample_datas_id",$value,
+				array()),ENT_QUOTES,AppConfig::character),
+			htmlspecialchars(My_sample_datas::generateForm_test("id", array(ModelRunnable::formIndex=>"textArea"),$model)
+				,ENT_QUOTES,AppConfig::character));
 	}
 	
 	public function testSetParam(){
@@ -307,7 +328,12 @@ class Model_test extends Lf_testCase{
 		$this->getControl()->equalsTrue(My_sample_datas::isValidation());
 		$this->getControl()->equals(count(My_sample_datas::getErrorItemList()),0);
 		$this->getControl()->equals(My_sample_datas::getErrorMessage(),CommonResources::nullCharacter);
+		$this->resetForm();
+		My_sample_datas::setSessionParamFlag(false);
 	}
+	
+	
+	
 	
 	
 	

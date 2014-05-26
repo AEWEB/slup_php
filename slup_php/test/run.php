@@ -2,8 +2,9 @@
 	define("appHome","../");
 	require_once appHome."config/testConfig.php";	
 	$test=new LF_test(array("DatabaseParameter","HtmlHelper"
-		,"MySQLDriver","Model","HtmlHelper"
-		,"Controller"//,"CustomTag_test"
+		,"MySQLDriver",
+	"Model",
+	"Controller","TopController"
 	));
 	$test->outputInfo();
 ?>

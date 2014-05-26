@@ -1,5 +1,5 @@
 <?php
-abstract class Controller implements ControllerRunnable{
+abstract class Controller extends ModuleBase implements ControllerRunnable{
 	
 
 	/**
@@ -108,6 +108,10 @@ abstract class Controller implements ControllerRunnable{
 	protected function setupNotSsl(){
 		$this->setJsAppUrl(AppConfig::getHost());
 		session_set_cookie_params(0,AppConfigRunnable::cookieParams,"");
+		AppConfig::includeModel(array("redirector"));
+		if(($param=HtmlHelper::getGetParam(AppConfig::getRedirectIndex()))!==NULL){
+			Redirector::setupRedirect($param, $this->getDB(self::basicDbIndex));
+		}
 	}
 	/**
 	 * Setup system.
@@ -115,13 +119,18 @@ abstract class Controller implements ControllerRunnable{
 	 * @return void
 	 */
 	protected function setup(){
+		$this->includeResource();
 		$this->accessDistribution();
 		$this->setupSessionData();
 		$this->setAction($this->analysisAction());
 		$this->setTitle(AppConfigRunnable::formalName);
 		$this->setAppMenu($this->getViewPath().AppConfigRunnable::defaultMenuFile);
 	}
-
+	
+	protected function includeResource(){
+		require_once AppConfig::getStringPath().static::getControllerName().".php";
+	}
+	
 	/**
 	 * Access distribution.
 	 * アクセスを振り分ける
@@ -141,10 +150,12 @@ abstract class Controller implements ControllerRunnable{
 				||($finger=HtmlHelper::getSessionParam(AppConfigRunnable::fingerPrintIndex))===NULL){
 		}else if(!$this->isFingerprint($finger)){//セッションが不正
 		}else{
-			if(count($user=Sl_user::findByIdSession($this->getAuthDB(),$userId))>0){//セッションデータが存在
+		#	$this->log("user : ".$userId);
+			if(count($user=Sl_user::findByIdSession($this->getAuthDB(),Sl_user::createModel(array(Sl_user::id=>$userId))))>0){//セッションデータが存在
 				$this->setUser($user[0]);
 				return;
 			}
+		#	$this->log(print_r($user,true));
 		}
 		unset($_SESSION[AppConfigRunnable::userSessionIndex]);//セッション情報を破棄
 		unset($_SESSION[AppConfigRunnable::fingerPrintIndex]);
@@ -156,13 +167,20 @@ abstract class Controller implements ControllerRunnable{
 	 * @return boolean
 	 */
 	protected function registerSessionUser(){
-		if(count($user=Sl_user::findByIdLogin($this->getAuthDB(),$this->getUser()->get(sl_user::id),$this->getUser()->get(sl_user::password)))>0){//データが存在する
+		if(count($user=Sl_user::findByIdLogin($this->getAuthDB(),$this->getUser()->get(sl_user::id),
+			$this->parsePassword($this->getUser()->get(sl_user::password))))>0){//データが存在する
 			HtmlHelper::setSessionParam(AppConfigRunnable::userSessionIndex,$user[0]->get(Sl_user::id));
 			HtmlHelper::setSessionParam(AppConfigRunnable::fingerPrintIndex,$this->getTrueFinger());
 			return true;
 		}
 		return false;
 	}
+	
+	protected function parsePassword($password){
+		return md5($password);
+	}
+	
+	
 	/**
 	 * Check the session.
 	 * セッションを確認
@@ -215,16 +233,15 @@ abstract class Controller implements ControllerRunnable{
 	 * @see ControlllerRunnable::run()
 	 */
 	public function run(){
-		return $this->getViewPath().$this->getControllerName().CommonResources::slash.call_user_func_array(array($this,$this->getAction()),array()).".php";
+		return $this->getViewPath().$this->getControllerName().CommonResources::slash.
+			(($view=call_user_func_array(array($this,$this->getAction()),array()))!==null ? $view:$this->getAction()).".php";
 	}
 	/**
 	 * action that is run by default
 	 * デフォルトで実行されるアクション
 	 * @return string
 	 */
-	public function index(){
-		return Controller::action_index;
-	}
+	public function index(){}
 	/**
 	 * @see ControlllerRunnable::exitSession()
 	 */
@@ -334,7 +351,7 @@ abstract class Controller implements ControllerRunnable{
 	/**
 	 * @see ControllerRunnable::getActionForm()
 	 */
-	public function getActionForm($name,$callMethod,$method,$option,$model,$time){
+	public function getActionForm($name,$callMethod,$method,$option,$model,$time=AppConfigRunnable::securityTime){
 		$url=HtmlHelper::getActionUrl(static::getControllerName(), $callMethod);
 		$tag=HtmlHelper::form($name, $url, $method, $option);
 		$model->setupSecurity($time, $model);
@@ -439,6 +456,18 @@ abstract class Controller implements ControllerRunnable{
 	protected function setDB($dbIndex,$db) {
 		$this->dbList[$dbIndex]=$db;
 	}
-
+	
+	/**
+	 * footer for mail.
+	 */
+	protected function getMailFooter(){
+		return "
+	
+------------------------
+".AppConfigRunnable::formalName."
+".$this->getAppUrl()."
+------------------------";
+	}
+	
 }
 ?>

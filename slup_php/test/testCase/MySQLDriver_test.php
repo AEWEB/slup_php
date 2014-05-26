@@ -102,32 +102,94 @@
 		$select=$this->db2->select($db2Select);
 		$this->getControl()->equals($select[0][My_sample_datas::createModel()->get(My_sample_datas::name)],My_sample_datas::nameValue);
 	}
-	
-	public function testGetSelectModel(){
+	public function testConstructWhere(){
 		$this->db->setup();
-		$columModel=Sl_user::createModel();
-		$model=$this->db->getSelectModel($columModel, null,$columModel->createModel()->get(Sl_user::id)."='".TestUser::id."'");
+		//1つのみ
+		$this->getControl()->equals($this->db->constructWhere(My_sample_datas::createModel(array(My_sample_datas::mail=>My_sample_datas::mailValue)))," where ".My_sample_datas::mail."='".My_sample_datas::mailValue."'");
+		//3つ
+		$this->getControl()->equals($this->db->constructWhere(My_sample_datas::createModel(array(My_sample_datas::id=>My_sample_datas::idValue,
+			My_sample_datas::name=>My_sample_datas::nameValue,My_sample_datas::tel=>My_sample_datas::telValue))),
+			" where ".My_sample_datas::id."='".My_sample_datas::idValue."' and ".My_sample_datas::name."='".My_sample_datas::nameValue."' and ".My_sample_datas::tel."='".My_sample_datas::telValue."'");
+		//オプションが一つ
+		$conditionOption=array();
+		$conditionOption[]=array(DBDriver::queryOptionIndex_logic=>MySQLDriver::andSql,DBDriver::queryOptionIndex_val=>"test='test'");
+		$this->getControl()->equals($this->db->constructWhere(My_sample_datas::createModel(array()),array(DBDriver::queryOptionIndex_condition=>$conditionOption)),
+			" where test='test'");
+		//オプションが二つ以上
+		$conditionOption[]=array(DBDriver::queryOptionIndex_logic=>MySQLDriver::andSql,DBDriver::queryOptionIndex_val=>"test2='test2'");
+		$conditionOption[]=array(DBDriver::queryOptionIndex_logic=>MySQLDriver::orSql,DBDriver::queryOptionIndex_val=>"test3='test3'");
+		$this->getControl()->equals($this->db->constructWhere(My_sample_datas::createModel(array()),array(DBDriver::queryOptionIndex_condition=>$conditionOption)),
+				" where test='test' and test2='test2' or test3='test3'");
+		//カラム3つオプション3つ
+		$conditionOption[0][DBDriver::queryOptionIndex_logic]=MySQLDriver::orSql;
+		$this->getControl()->equals($this->db->constructWhere(My_sample_datas::createModel(array(My_sample_datas::id=>My_sample_datas::idValue,
+			My_sample_datas::name=>My_sample_datas::nameValue,My_sample_datas::tel=>My_sample_datas::telValue)),array(DBDriver::queryOptionIndex_condition=>$conditionOption)),
+			" where ".My_sample_datas::id."='".My_sample_datas::idValue."' and ".My_sample_datas::name."='".My_sample_datas::nameValue."' and ".My_sample_datas::tel."='".My_sample_datas::telValue."'".
+			" or test='test' and test2='test2' or test3='test3'");
+		//null
+		$this->getControl()->equals($this->db->constructWhere(My_sample_datas::createModel(array()),array()),CommonResources::nullCharacter);
+	}
+	public function testConstructOrder(){
+		//なし
+		$this->getControl()->equals($this->db->constructOrder(My_sample_datas::createModel(array())), CommonResources::nullCharacter);
+		//オーダーby句
+		$this->getControl()->equals($this->db->constructOrder(My_sample_datas::createModel(array()),
+			array(DBDriver::queryOptionIndex_order=>"date desc"))," order by date desc");
+	}
+	public function testConstructProjection(){
+		//なし
+		$this->getControl()->equals($this->db->constructProjection(My_sample_datas::createModel(array())), "*");
+		//射影有
+		$this->getControl()->equals($this->db->constructProjection(My_sample_datas::createModel(array()),
+				array(DBDriver::queryOptionIndex_projection=>"id,tel")),"id,tel");
+	}
+	public function testConstructLimit(){
+		//なし
+		$this->getControl()->equals($this->db->constructLimit(My_sample_datas::createModel(array())), CommonResources::nullCharacter);
+		//start有
+		$this->getControl()->equals($this->db->constructLimit(My_sample_datas::createModel(array()),
+			array(DBDriver::queryOptionIndex_limitStart=>"0")), CommonResources::nullCharacter);
+		//count有
+		$this->getControl()->equals($this->db->constructLimit(My_sample_datas::createModel(array()),
+			array(DBDriver::queryOptionIndex_limitCount=>"0")), CommonResources::nullCharacter);
+		//limit有
+		$this->getControl()->equals($this->db->constructLimit(My_sample_datas::createModel(array()),
+			array(DBDriver::queryOptionIndex_limitStart=>"0",DBDriver::queryOptionIndex_limitCount=>"10")), 
+			" limit 0,10");
+	}
+	
+	
+	public function testGetSelectModel(){		
+		$this->db->setup();
+		$model=$this->db->getSelectModel(Sl_user::createModel(array(Sl_user::id=>TestUser::id)));
 		$this->getControl()->equals(count($model),1);
 		$this->getControl()->equals($model[0]->get(Sl_user::id),TestUser::id);
 	}
+	
 	public function testInsert(){
 		$this->db2->startTransaction();
-		$columnModel=My_sample_datas::createModel();
-		$this->getControl()->equalsTrue($this->db2->insert($columnModel,
-				array("null,'".My_sample_datas::nameValue."','".My_sample_datas::mailValue."','".My_sample_datas::telValue."'")));
-		
-		$id=$this->db2->getLastInsertId($columnModel);
-		$model=$this->db2->getSelectModel($columnModel,null,$columnModel->get(My_sample_datas::id)."=".$id);
-		$this->getControl()->equals(intval($model[0]->get(My_sample_datas::id)),$id);
-		
+		//データなし
+		$this->getControl()->equals($this->db2->insert(My_sample_datas::createModel(array())), false);
+		//カラム不足
+		$this->getControl()->equals($this->db2->insert(
+			My_sample_datas::createModel(array(
+				My_sample_datas::mail=>My_sample_datas::mailValue,
+				My_sample_datas::tel=>My_sample_datas::telValue))),false);
+		//全データ投入
+		$this->getControl()->equalsTrue($this->db2->insert(
+			My_sample_datas::createModel(array(
+				My_sample_datas::name=>My_sample_datas::nameValue,
+				My_sample_datas::mail=>My_sample_datas::mailValue,
+				My_sample_datas::tel=>My_sample_datas::telValue))));
+		$id=$this->db2->getLastInsertId(My_sample_datas::createModel());
+		$model=$this->db2->getSelectModel(My_sample_datas::createModel(array(My_sample_datas::id=>$id)));
+		$this->getControl()->equals(intval($model[0]->get(My_sample_datas::id)),$id);	
 		$this->db2->commit();
 	}
-	
 	public function testDelete(){
 		$this->db2->startTransaction();
-		$columnModel=My_sample_datas::createModel();
-		$this->getControl()->equalsTrue($this->db2->delete($columnModel,$columnModel->get(My_sample_datas::id)."='".My_sample_datas::idValue."'"));
-		$model=$this->db2->getSelectModel($columnModel,null,$columnModel->get(My_sample_datas::id)."='".My_sample_datas::idValue."'");
+		$this->getControl()->equalsTrue($this->db2->delete(($model=My_sample_datas::createModel(array(My_sample_datas::id=>My_sample_datas::idValue)))));
+		$model=$this->db2->getSelectModel($model);
 		$this->getControl()->equals(count($model),0);
 		$this->db2->rollback();
 	}
@@ -139,11 +201,13 @@
 	}
 	public function testUpdate(){
 		$this->db2->startTransaction();
-		$columnModel=My_sample_datas::createModel();
-		$this->getControl()->equalsTrue($this->db2->update($columnModel,array($columnModel->get(My_sample_datas::mail)."='update'"),
-				$columnModel->get(My_sample_datas::id)."=".My_sample_datas::idValue));
-		$model=$this->db2->getSelectModel($columnModel,null,$columnModel->get(My_sample_datas::id)."=".My_sample_datas::idValue);
+		$model=My_sample_datas::createModel(array(My_sample_datas::id=>My_sample_datas::idValue));
+		$list[DBDriver::queryOptionIndex_update][My_sample_datas::mail]="update";
+		$list[DBDriver::queryOptionIndex_update][My_sample_datas::name]="update";
+		$this->getControl()->equalsTrue($this->db2->update($model,$list));
+		$model=$this->db2->getSelectModel($model);
 		$this->getControl()->equals($model[0]->get(My_sample_datas::mail),"update");
+		$this->getControl()->equals($model[0]->get(My_sample_datas::name),"update");
 		$this->db2->rollback();
 	}
 }

@@ -21,7 +21,12 @@
 		/**
 		 * url for redurect.
 		 */
-		const redirectUrl="";
+		const redirectUrl="top";
+		
+		/**
+		 * Security time.
+		 */
+			const securityTime="5 minute";
 		
 		/**
 		 * auth parameter.
@@ -54,6 +59,28 @@
 			 * @var　string
 			 */
 			const usualRestriction  = "0";
+			
+			
+		/**
+		 * auth config.
+		 */
+			/**
+			 * twitter config .
+			 */
+			const twitter_consumerKey="GVu1j5SqVqsBBQfbDHiu1Q";
+			const twitter_consumerSecret="F6cEi6xWFWBoz2KJmYVRzdueiJmvKXLZAC21HAb3M";
+			const twitter_callbackUrl="https://localhost/top/twitterAuth";
+			const twitter_idIndex="tw/";
+			const twitter_careerId="1";
+			const twitter_saveIndex="twitterSave";
+			/**
+			 * facebook config .
+			 */
+			const facebook_appId="163776520487178";
+			const facebook_secret="3a27a6480e2a729287598c10ed39bd40";
+			const facebook_idIndex="fb/";
+			const facebook_careerId="2";
+			const facebook_saveIndex="facebookSave";
 			
 		
 		/**
@@ -93,6 +120,7 @@
 			public static function getImagePath();
 			public static function getExtLibPath();
 			public static function getImageSavePath();
+			public static function getLogPath();
 			
 			/**
 			 * Get host.
@@ -217,6 +245,8 @@
 			public static function getConfigPath(){
 				return static::getAppHome()."config/";
 			}
+			
+			
 			/**
 			 * view path.
 			 */
@@ -247,7 +277,16 @@
 				return static::getLibPath()."ext/";
 			}
 			public static function getImageSavePath(){
-				return static::getResourcePath()."/image/upload/";
+				return static::getResourcePath()."image/upload/";
+			}
+			public static function getLogPath(){
+				return static::getResourcePath()."logs/";
+			}
+			public static function getStringPath(){
+				return static::getResourcePath()."string/";
+			}
+			public static function parseAuthUserPassword($id){
+				return substr(md5($id),0,20);
 			}
 			
 			
@@ -283,34 +322,38 @@
 			}
 			/**
 			 * 通常アクセスへリダイレクト
+			 * @param DBDriver $db
 			 */
-			public static function redirectHost(){
-				header("Location: ".AppConfig::getHost().self::redirectUrl."?".self::getRedirectIndex()."=".$this->createRedirectCode());
+			public static function redirectHost($db){
+				header("Location: ".AppConfig::getHost().self::redirectUrl."?".self::getRedirectIndex()."=".self::createRedirectCode($db));
 				exit();
 			}
-				/**
-				 * 暗号化したGetIndexを生成
-				 * @return string
-				 */
-				protected static function getRedirectIndex(){
-					return substr((md5($_SERVER['HTTP_USER_AGENT'])), 0, 10);
-				}
-				protected static function createRedirectCode(){
-					static::includeModel(array("redirector"));
-					$redirectCode=md5(strtotime("now").$_SERVER['HTTP_USER_AGENT'].HtmlHelper::getEscapeSessionId());
-					$model=new Redirector();
-					$model->setId($redirectCode);
-					$model->setSessionId(HtmlHelper::getEscapeSessionId());
-					$model->setDate(strtotime("20 second"));
-					$model->insert($this->getDB(self::basicDbIndex), $model);
-					return $redirectCode;
-				}
+			/**
+			 * 暗号化したGetIndexを生成
+			 * @return string
+			 */
+			public static function getRedirectIndex(){
+				return substr((md5($_SERVER['HTTP_USER_AGENT'])), 0, 10);
+			}
+			/**
+			 * @param DBDriver $db
+			 * @return string
+			 */
+			public static function createRedirectCode($db){
+				static::includeModel(array("redirector"));
+				$redirectCode=md5(strtotime("now").$_SERVER['HTTP_USER_AGENT'].HtmlHelper::getEscapeSessionId());
+				$model=Redirector::createModel(array(Redirector::id=>$redirectCode,
+					Redirector::session_id=>HtmlHelper::getEscapeSessionId(),
+					Redirector::date=>strtotime("20 second")));
+				Redirector::insert($db, $model);
+				return $redirectCode;
+			}
 			
 			/**
 			 * redirect ro ssl.
 			 */
 			public static function redirectSsl(){
-				header("Location: ".AppConfig::getSslHost().self::redirectUrl);
+				header("Location: ".AppConfig::getSslHost());
 				exit();
 			}
 			

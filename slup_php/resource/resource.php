@@ -72,16 +72,24 @@ interface CommonResources{
 	const asterisk="*";
 	const underscore="_";
 	
-	/**
-	 * sql
-	 */
-	const andSql="and";
-	const orSql="or";
 }
 interface ModelResource{
+	/**
+	 * User
+	 */
 	const sl_user_id="ID";
 	const sl_user_password="パスワード";
 	const sl_user_m_id="メールアドレス";
+	const sl_user_consentCheck="規約同意のチェック";
+	const sl_user_passwordConfirmation="確認用パスワード";
+	/**
+	 * image
+	 */
+	const sl_image_id="画像ID";
+	const sl_image_title="画像タイトル";
+	const sl_image_size="画像サイズ";
+	const sl_image_type="画像タイプ";
+	const sl_image_user="ユーザー";
 }
 class ErrorMessage{
 	/**
@@ -118,16 +126,21 @@ class ErrorMessage{
 	public static function getCheckMaxLength($max_len){
 		return "は".$max_len."文字以下で入力してください。";
 	}
+	
+	public static function getCheckDuplication($outputName){
+		return "その".$outputName."は既に登録されています。";
+	}
+	
 }
 class Syntax implements CommonResources{
 	public static function leftSpace($str){
 		return self::space.$str;
 	}
 }
+/**
+
 class SqlSyntax implements CommonResources{
-	/**
-	 * @var string
-	 */
+	
 	const inner_join="inner join";
 	const left_join="left join";
 	const right_join="right join";
@@ -135,12 +148,9 @@ class SqlSyntax implements CommonResources{
 	const funcNow="now()";
 	const asc="asc";
 	const desc="desc";
-	const nullStr="null";
+	
 	const isNull=" is null ";
 	
-	/**
-	 * @return string
-	 */
 	public static function getAnd(){
 		return self::space.self::andSql.self::space;	
 	}
@@ -156,13 +166,12 @@ class SqlSyntax implements CommonResources{
 	public static function getNotIn(){
 		return self::space."not".self::space."in".self::space; 
 	}
-	/**
-	 *@return string
-	 */
+	
 	public static function getCurrentDate_where() {
 		return "between current_date and DATE_FORMAT(current_date, '%Y-%m-%d 23:59:59' )";
 	}
 }
+**/
 
 
 ?>

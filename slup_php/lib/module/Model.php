@@ -3,7 +3,7 @@
  * Skeleton for model.
  * モデルの雛形となるクラス
  */
-abstract class Model implements ModelRunnable{
+abstract class Model extends ModuleBase implements ModelRunnable{
 
 	/**
 	 * list for storing the data.
@@ -35,24 +35,16 @@ abstract class Model implements ModelRunnable{
 		$model=new $class();
 		if($data!==null){
 			foreach ($list as $key => $value){
-				if(isset($data[$value[self::valueIndex]])){
-					call_user_func_array(array($model,"set"),array($key,$data[$value[self::valueIndex]]));
+				if(isset($data[$value[self::valueIndex]])){//物理名称でモデルの値を形成
+					$model->set($key,$data[$value[self::valueIndex]]);
+				}else if(isset($data[$key])){//キーでモデルの値を形成
+					$model->set($key,$data[$key]);
 				}
 			}
 		}else{
 			if(($column=static::getColumn())===null){
-				$find=CommonResources::nullCharacter;
 				foreach ($list as $key => $value){
-					call_user_func_array(array($model,"set"),array($key,$value[self::valueIndex]));
-					if(isset($value[self::findIndex])&&$value[self::findIndex]){
-						$find.=CommonResources::comma.static::getAs().$value[self::valueIndex];
-					}
-				}
-
-				if($find===CommonResources::nullCharacter){
-					call_user_func_array(array($model,"set"),array(self::findColumnKey,null));
-				}else{
-					call_user_func_array(array($model,"set"),array(self::findColumnKey,substr($find,strlen(CommonResources::comma))));
+					$model->set($key,$value[self::valueIndex]);
 				}
 				static::setColumn($model);
 			}else{
@@ -82,7 +74,7 @@ abstract class Model implements ModelRunnable{
 	 * @return string
 	 */
 	public function get($name){
-		return $this->data[$name];
+		return isset($this->data[$name]) ? $this->data[$name] : null;
 	}
 	/**
 	 * @param string $name
@@ -91,98 +83,71 @@ abstract class Model implements ModelRunnable{
 	public function set($name,$value){
 		$this->data[$name]=$value;
 	}
+	protected function getData(){
+		return $this->data;
+	}
+	protected function setData($data){
+		$this->data=$data;
+	}
 
 	/**
 	 * @see ModelRunnable
 	 */
-	public static function find($db,$where=null,$orderBy=null,$limitStart=0,$limitCount=30){
-		$columnModel=static::createModel();
-		return $db->getSelectModel($columnModel,$columnModel->get(self::findColumnKey),$where,$orderBy,$limitStart,$limitCount);
+	public static function find($db,$model,$options=null){
+		return $db->getSelectModel($model,$options);
+	}
+
+	/**
+	 * @see ModelRunnable
+	 */
+	public static function findByRand($db,$model,$options,$as,$id,$subTable){
+		//return $db->fetchModel("select ".$column." from ".$columnModel->getTable().",(select ".$as.$id." from ".$subTable.
+			//	$where." order by rand() limit ".$limitStart.",".$limitCount.") as randam where ".$as.$id."=randam.".$id.$add, $columnModel);
+		$options[DBDriver::queryOptionIndex_condition]=",(select ".$as.$id." from ".$subTable.
+			$where." order by rand() limit ".$limitStart.",".$limitCount.") as randam where ".$as.$id."=randam.".$id.$add;		
+		return $db->getSelectModel($model,$superOptions);
 	}
 	/**
 	 * @see ModelRunnable
 	 */
-	public static function find_column($db,$findColumn,$where=null,$orderBy=null,$limitStart=0,$limitCount=30){
+	public static function findByCount($db,$model,$options=null){
 		$columnModel=static::createModel();
-		return $db->getSelectModel($columnModel,$findColumn,$where,$orderBy,$limitStart,$limitCount);
-	}
-	/**
-	 * @see ModelRunnable
-	 */
-	public static function findBy($db,$whereColumn,$val,$addWhere=null,$all=false){
-		$columnModel=static::createModel();
-		if($addWhere===null){
-			$addWhere=CommonResources::nullCharacter;
-		}
-		$column=null;
-		if(!$all){
-			$column=$columnModel->get(self::findColumnKey);
-		}
-		return $db->getSelectModel($columnModel,$column,$columnModel->get($whereColumn).CommonResources::equal.CommonResources::quote.$val.CommonResources::quote.$addWhere);
-	}
-	/**
-	 * @see ModelRunnable
-	 */
-	public static function findByRand($db,$as,$id,$subTable,$where,$all=false,$limitStart=0,$limitCount=30,$add=""){
-		$columnModel=static::createModel();
-		$column=null;
-		if(!$all){
-			$column=$columnModel->get(self::findColumnKey);
-			$all=true;
-		}
-		return $db->fetchModel("select ".$column." from ".$columnModel->getTable().",(select ".$as.$id." from ".$subTable.
-				$where." order by rand() limit ".$limitStart.",".$limitCount.") as randam where ".$as.$id."=randam.".$id.$add, $columnModel);
-	}
-	/**
-	 * @see ModelRunnable
-	 */
-	public static function findByCount($db,$where=null,$countColumn=null){
-		$columnModel=static::createModel();
-		if($countColumn===null){
-			$countColumn=CommonResources::asterisk;
-		}
-		$list=$db->select("select count(".$countColumn.") as modelCount from ".$columnModel->getTable().$db->generateWhereClause($where));
+		$list=$db->select("select count(".$db->constructProjection($model,$options).") as modelCount from ".$columnModel->getTable().
+			$db->constructWhere($model,$options));
 		return $list[0]["modelCount"];
 	}
 	/**
 	 * @see ModelRunnable
 	 */
 	public static function insert($db,$model){
-		$list=static::getColumnArray();
-		foreach ($list as $key => $value){
-			$keyList[]=$key;
-			if(($val=call_user_func_array(array($model,"get"),array($key)))===null){
-				$valuesList[]=SqlSyntax::nullStr;
-			}else{
-				$valuesList[]=CommonResources::quote.$val.CommonResources::quote;
-			}
-		}
-		$db->insert($model, $valuesList,$keyList);
+		return $db->insert($model);
 	}
 	/**
 	 * @see ModelRunnable
 	 */
-	public static function save($db,$model,$all=false){
-		$list=static::getColumnArray();
-		$updateList=array();
+	public static function save($db,$model,$updateId=null,$all=false){
+		$list=static::getColumnArray();	
+		$options=array();
 		foreach ($list as $key => $value){
-			if(!$all&&isset($value[self::updateIndex])&&!$value[self::updateIndex]){
+			if($key===ModelRunnable::id&&$updateId!==null){
+				$options[DBDriver::queryOptionIndex_update][$key]=$updateId;
+			}else if(!$all&&isset($value[self::updateIndex])&&!$value[self::updateIndex]){
 			}else{
-				if(($val=call_user_func_array(array($model,"get"),array($key)))===null){
-					$updateList[]=$value[self::valueIndex].CommonResources::equal.SqlSyntax::nullStr;
+				if(($val=$model->get($key))===null){
+					$options[DBDriver::queryOptionIndex_update][$key]=null;
 				}else{
-					$updateList[]=$value[self::valueIndex].CommonResources::equal.CommonResources::quote.$val.CommonResources::quote;
+					$options[DBDriver::queryOptionIndex_update][$key]=$val;
 				}
 			}
 		}
-		$db->update($model, $updateList,$list[self::id][self::valueIndex].CommonResources::equal.CommonResources::quote.$model->get(self::id).CommonResources::quote);
+		$model=static::createModel(array(self::id=>$model->get(ModelRunnable::id)));
+		return $db->update($model,$options);
 	}
 	/**
 	 * @see ModelRunnable
 	 */
 	public static function delete($db,$model){
-		$list=static::getColumnArray();
-		$db->delete($model,$list[self::id][self::valueIndex].CommonResources::equal.CommonResources::quote.$model->get(self::id).CommonResources::quote);
+		$db->delete(static::createModel(array(self::id=>$model->get(ModelRunnable::id))));
 	}
 
 	/**
@@ -255,13 +220,16 @@ abstract class Model implements ModelRunnable{
 		/**
 		 * 
 		 * @param string $name
-		 * @param string $param
-		 * @param string $model
+		 * @param String[][] $param
+		 * @param ModelRunnable $model
 		 * @return mixed|NULL
 		 */
 		protected static function generateForm($name,$param,$model){
+		#	print("---------<br/>");
+		#	print_r($param);
+		#	print("---------<br/>");
 			if(isset($param[self::formIndex])){
-				return call_user_func_array(array("HtmlHelper",self::formIndex),array(static::parseFormName($name),$param,$model));
+				return call_user_func_array(array("HtmlHelper",$param[self::formIndex]),array(static::parseFormName($name),$model->get($name),$param));
 			}else{
 				return null;
 			}
@@ -382,6 +350,8 @@ abstract class Model implements ModelRunnable{
 			if(($securityValue=HtmlHelper::getSessionParam(static::getSecurityKeyName().self::sessionSecurity_value))!==NULL
 					&&($time=HtmlHelper::getSessionParam(static::getSecurityKeyName().self::sessionSecurity_time))!==NULL){
 				if($value===$securityValue&&$time>strtotime("now")){
+					unset($_SESSION[static::getSecurityKeyName().self::sessionSecurity_value]);
+					unset($_SESSION[static::getSecurityKeyName().self::sessionSecurity_time]);
 					return null;
 				}
 			}
@@ -453,20 +423,28 @@ abstract class Model implements ModelRunnable{
 		}
 
 	/**
+	 * @var boolean
+	 */
+	protected static $sessionParamFlag=false;
+		
+	/**
 	 * セキュリティーをセットアップ
 	 * @param string $time Effective time.有効時間
 	 * @param ModelRunnable $model
 	 * @return void
 	 */
 	public static function setupSecurity($time,$model){
-		$value=substr((md5(date("YmdD His"))),0,10);
-		HtmlHelper::setSessionParam(static::getSecurityKeyName().self::sessionSecurity_value, $value);
-		HtmlHelper::setSessionParam(static::getSecurityKeyName().self::sessionSecurity_time,strtotime($time));
+		if(!static::$sessionParamFlag){
+			$value=substr((md5(date("YmdD His"))),0,10);
+			HtmlHelper::setSessionParam(static::getSecurityKeyName().self::sessionSecurity_value, $value);
+			HtmlHelper::setSessionParam(static::getSecurityKeyName().self::sessionSecurity_time,strtotime($time));
+			static::$sessionParamFlag=true;
+		}else{
+			$value=HtmlHelper::getSessionParam(static::getSecurityKeyName().self::sessionSecurity_value);
+		}
 		$model->set(self::security,$value);
-		$model->set($model->parseFormName(self::security),
-			HtmlHelper::text($model->parseFormName(self::security), $value,array(ModelRunnable::formType=>"hidden")));
+		$model->set($model->parseFormName(self::security),HtmlHelper::text($model->parseFormName(self::security), $value,array(ModelRunnable::formType=>"hidden")));
 	}
-
 
 	/**
 	 * @see ModelRunnable

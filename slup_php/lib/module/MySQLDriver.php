@@ -2,7 +2,7 @@
 /**
  * Class for MySql driver
  */
-class MySQLDriver implements DBDriver{
+class MySQLDriver extends ModuleBase implements DBDriver{
 	/**
 	 * Error message when it fails to connect db
 	 * db接続に失敗した場合のエラーメッセージ
@@ -17,7 +17,7 @@ class MySQLDriver implements DBDriver{
 	 * Error when it fail to select.
 	 * クエリーが失敗した時のエラーメッセージ
 	 */
-	const selectErrorWord  = "Failed to select::";
+	const selectErrorWord = "Failed to select::";
 	/**
 	 * db connection.
 	 * @var String
@@ -37,6 +37,15 @@ class MySQLDriver implements DBDriver{
 	 * @var DatabaseParameter
 	 */
 	private $parameter;
+	
+	/**
+	 * sql
+	 */
+	const whereSyntax="where";
+	const andSql="and";
+	const orSql="or";
+	const nullStr="null";
+	const funcNow="now()";
 
 	/**
 	 * constructor
@@ -94,7 +103,7 @@ class MySQLDriver implements DBDriver{
 		$this->transactionFlag=false;
 	}
 	public function query($queryWord){
-		print($queryWord);
+		$this->log($queryWord);
 		if(!mysql_query($queryWord)){//Query result is invalid 問い合わせ結果が不正
 			if($this->transactionFlag){//If a transaction has been started.トランザクションが開始されている場合
 				$this->rollback();//Roll back!!!
@@ -108,7 +117,7 @@ class MySQLDriver implements DBDriver{
 	 * @see DBDriver::select()
 	 */
 	public function select($selectWord){
-		//	print($selectWord);
+		$this->log($selectWord);
 		if(!($readData=mysql_query($selectWord))){
 			$this->getControl()->queryError(self::selectErrorWord,$selectWord);
 		}
@@ -118,33 +127,102 @@ class MySQLDriver implements DBDriver{
 		}
 		return $readList;
 	}
+	
+	
 	/**
-	 * (non-PHPdoc)
-	 * @see DBDriver::getSelectModel()
+	 * @see DBDriver::constructWhere()
 	 */
-	public function getSelectModel($model,$column,$where=null,$orderBy=null,$limitStart=0,$limitCount=30){
-		if($column===null){
-			$columnClause="*";
-			$find=false;
-		}else{
-			$columnClause=$column;
-			$find=true;
+	public function constructWhere($model,$options=null){
+		$list=$model::getColumnArray();
+		$columnModel=$model->createModel();
+		$syntax=null;
+		foreach ($list as $key => $val){
+			if(($value=$model->get($key))!==null){
+				$syntax=$this->addConstractWhere($syntax,$this->constructWhere_usual($columnModel, $key, $value),self::andSql);
+			}
 		}
-		$orderByClause="";
-		if($orderBy!==null){
-			$orderByClause=" order by ".$orderBy;
+		if(isset($options[DBDriver::queryOptionIndex_condition])){
+			$list=$options[DBDriver::queryOptionIndex_condition];
+			foreach ($list as $key => $val){
+				if(is_numeric($key)){//key is numeric.
+					$syntax=$this->addConstractWhere($syntax, $this->constructWhere_numeric($key, $val[DBDriver::queryOptionIndex_val]),$val[DBDriver::queryOptionIndex_logic]);
+				}
+			}
 		}
-		$selectWord="select ".$columnClause." from ".$model->getTable().$this->generateWhereClause($where).$orderByClause." limit ".$limitStart.",".$limitCount;
-		return $this->fetchModel($selectWord,$model);
+		return $syntax===null ? CommonResources::nullCharacter : $syntax;
+	}
+		/**
+		 * @param string $syntax
+		 * @param string $value
+		 * @param string $logic
+		 * @return string
+		 */
+		protected function addConstractWhere($syntax,$value,$logic=null){
+			if($syntax===null){
+				$syntax=CommonResources::space.self::whereSyntax.CommonResources::space;
+			}else if($logic!==null){
+				$syntax.=CommonResources::space.$logic.CommonResources::space;
+			}
+			return $syntax.$value;
+		}
+		
+		
+		/**
+		 * @param string $key
+		 * @param string $value
+		 * @return String
+		 */
+		protected function constructWhere_numeric($key,$value){
+			return $value;
+		}
+		/**
+		 * @param ModelRunnable $model
+		 * @param string $key
+		 * @param string $value
+		 * @return string
+		 */
+		protected function constructWhere_usual($model,$key,$value){
+			return $model->get($key).CommonResources::equal.CommonResources::quote.$value.CommonResources::quote;
+		}
+		
+		
+	/**
+	 * @see DBDriver::constructOrder()
+	 */
+	public function constructOrder($model,$options=null){
+		return isset($options[DBDriver::queryOptionIndex_order]) ? " order by ".$options[DBDriver::queryOptionIndex_order]:CommonResources::nullCharacter;
 	}
 	/**
-	 * (non-PHPdoc)
+	 * @see DBDriver::constructProjection()
+	 */
+	public function constructProjection($model,$options=null){
+		return isset($options[DBDriver::queryOptionIndex_projection]) ? $options[DBDriver::queryOptionIndex_projection]:"*";
+	}
+		
+	/**
+	 * @see DBDriver::constructLimit()
+	 */
+	public function constructLimit($model,$options=null){
+		if(isset($options[DBDriver::queryOptionIndex_limitStart])&&isset($options[DBDriver::queryOptionIndex_limitCount])){
+			return " limit ".$options[DBDriver::queryOptionIndex_limitStart].",".$options[DBDriver::queryOptionIndex_limitCount];
+		}
+		return CommonResources::nullCharacter;
+	}
+	
+	/**
+	 * @see DBDriver::getSelectModel()
+	 */
+	public function getSelectModel($model,$options=null){
+		return $this->fetchModel("select ".$this->constructProjection($model,$options)." from ".$model->getTable().
+			$this->constructWhere($model,$options).$this->constructOrder($model,$options).$this->constructLimit($model,$options),$model);
+	}
+	/**
+	 * @see DBDriver::fetchModel
 	 */
 	public function fetchModel($selectWord,$model){
-	//	print($selectWord);
+		$this->log($selectWord);
 		if(!($readData=mysql_query($selectWord))){
 			$this->getControl()->queryError(self::selectErrorWord,$selectWord);
-			exit($selectWord);
 			return null;
 		}
 		$modelList=array();
@@ -153,54 +231,52 @@ class MySQLDriver implements DBDriver{
 		}
 		return $modelList;
 	}
+	
 	/**
-	 * @param string $where
+	 * @see DBDriver::insert()
 	 */
-	public function generateWhereClause($where){
-		$whereClause="";
-		if($where!==null){
-			$whereClause=" where ".$where;
+	public function insert($model,$options=null){
+		$list=$model::getColumnArray();
+		$columnModel=$model->createModel();
+		$columnList=array();
+		$valuesList=array();
+		foreach ($list as $key => $val){
+			$columnList[]=$columnModel->get($key);
+			if(($value=$model->get($key))!==null){
+				$valuesList[]=CommonResources::quote.$model->get($key).CommonResources::quote;				
+			}else{
+				$valuesList[]=self::nullStr;
+			}
 		}
-		return $whereClause;
+		return count($columnList)<1 ? false:$this->query("insert into ".$model->getTable().CommonResources::space.CommonResources::leftBrackets.
+			implode(",", $columnList).CommonResources::rightBrackets.CommonResources::space."values".CommonResources::leftBrackets.
+			implode(",", $valuesList).CommonResources::rightBrackets);
 	}
-
 	/**
-	 * @param ModelRunnable $model
-	 * @param String[] $valuesList
-	 * @param String[] $columnList
-	 * @return boolean
+	 * @see DBDriver::update()
 	 */
-	public function insert($model,$valuesList,$columnList=null){
-		$columnClause="";
-		if($columnList!==null){
-			$columnClause="(".implode(",",$columnList).")";
+	public function update($model,$options=null){
+		$list=$model::getColumnArray();
+		$columnModel=$model->createModel();
+		$updateList=array();
+		foreach ($list as $key => $val){
+			if(isset($options[DBDriver::queryOptionIndex_update][$key])){
+				$updateList[]=$columnModel->get($key).CommonResources::equal.CommonResources::quote.$options[DBDriver::queryOptionIndex_update][$key].CommonResources::quote;
+			}else if(array_key_exists($key,$options[DBDriver::queryOptionIndex_update])){
+				$updateList[]=$columnModel->get($key).CommonResources::equal.self::nullStr;
+			}
 		}
-		$valuesClause=implode(",",$valuesList);
-		return $this->query("insert into ".$model->getTable()." ".$columnClause
-				." values(".$valuesClause.")");
+		return count($updateList)< 1? false : $this->query("update ".$model->getTable().
+			" set ".implode(",",$updateList).$this->constructWhere($model,$options));
 	}
-	/**
-	 * @param ModelRunnable $model
-	 * @param String[] $updateList
-	 * @param String $where
-	 * @return boolean
+	/**)
+	 * @see DBDriver::delete()
 	 */
-	public function update($model,$updateList,$where=null){
-		//	print_r($updateList);
-		$updateClause=implode(",", $updateList);
-		//		print($updateClause."<br/>");
-		return $this->query("update ".$model->getTable().
-				" set ".$updateClause.$this->generateWhereClause($where));
-	}
-	/**
-	 * @param ModelRunnable $model
-	 * @param String $where
-	 * @return boolean
-	 */
-	public function delete($model,$where=null){
-		return $this->query("delete from ".$model->getTable().$this->generateWhereClause($where));
+	public function delete($model,$options=null){
+		return $this->query("delete from ".$model->getTable().$this->constructWhere($model,$options));
 	}
 	public function setup(){//Set to queryable state.問い合わせ可能な状態にセット
+		$this->log("---------setup---------- ".print_r($this->getParameter(),true)."------------------------");
 		return mysql_select_db($this->getParameter()->getDbName(),$this->connect);
 	}
 	/**

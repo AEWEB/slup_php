@@ -1,14 +1,5 @@
 <?php
 class HtmlHelper{
-	/**
-	 * index for form list.
-	 * @var string
-	 */
-	const value="value";
-	const output="output";
-	const option="option";
-	const id="id";
-	const checkBox="1";
 	
 	/**
 	 * index for sex param list.
@@ -17,7 +8,15 @@ class HtmlHelper{
 	const form_sexMan="0";
 	const form_sexWoman="1";
 
-
+	/**
+	 * form method name.
+	 */
+	const text="text";
+	const textArea="textArea";
+	const password="password";
+	const checkBox="checkBox";
+	
+	
 	/**
 	 * Generate form.
 	 * @param string $name
@@ -29,6 +28,8 @@ class HtmlHelper{
 	public static function form($name,$action ,$method ,$option ) {
 		return "<form name=\"".$name."\" action=\"".$action."\" method=\"".$method."\" ".$option.">";
 	}
+	
+	
 	/**
 	 * Generate input tag.
 	 * インプットタグを生成
@@ -38,13 +39,13 @@ class HtmlHelper{
 	 * @return string
 	 */
 	public static function text($name,$value,$option){
-		return "<input type=\"".(isset($option[ModelRunnable::formType]) ? $option[ModelRunnable::formType]:"text").
-			"\" name=\"".$name."\" value=\"".$value."\" ".
-			(isset($option[ModelRunnable::numMaxIndex]) ? 
-				"size=\"".$option[ModelRunnable::numMaxIndex].
+		return "<input type=\"".(isset($option[ModelRunnable::formType]) ? ($formType=$option[ModelRunnable::formType]):($formType="text")).
+			"\" name=\"".$name."\" value=\"".(($formType===self::password)? CommonResources::nullCharacter:$value)."\" ".
+			(isset($option[ModelRunnable::numMaxIndex]) ? "size=\"".$option[ModelRunnable::numMaxIndex].
 				"\" maxlength=\"".$option[ModelRunnable::numMaxIndex]."\" ":CommonResources::nullCharacter).
 			(isset($option[ModelRunnable::formIndexOption]) ? $option[ModelRunnable::formIndexOption]:CommonResources::nullCharacter).">";
-	}
+	}	
+	
 	/**
 	 * Generate text tag.
 	  * @param string $name input name.
@@ -58,6 +59,22 @@ class HtmlHelper{
 			"\" name=\"".$name."\" ".
 			(isset($option[ModelRunnable::formIndexOption]) ? $option[ModelRunnable::formIndexOption]:CommonResources::nullCharacter).">".$value."</textarea>";
 	}
+	/**
+	 * Generate checkBox.
+	 * @param string $name input name.
+	 * @param string $value value.
+	 * @param string $option other.
+	 * @return string
+	 */
+	public static function checkBox($name,$value,$option){
+		return "<input type='checkbox' name='".$name."' value='".
+			$option[ModelRunnable::equalsIndex]."' ".
+			($value===$option[ModelRunnable::equalsIndex]?"checked":CommonResources::nullCharacter)." >".
+			(isset($option[ModelRunnable::formIndexOption]) ? $option[ModelRunnable::formIndexOption]:CommonResources::nullCharacter);
+	}
+	
+	
+	
 	/**
 	 * Generate radio input tag.
 	  * @param string $name input name.
@@ -135,22 +152,7 @@ class HtmlHelper{
 		}
 		return $select."</select>";
 	}
-	/**
-	 * Generate checkBox.
-	 * @param string $name
-	 * @param string $value
-	 * @param string $checked
-	 * @param string $option
-	 * @return string
-	 */
-	public static function checkBox($name,$value,$checked,$option){
-		if($value===$checked){//チェックをつける
-			$checked="checked";
-		}else{
-			$checked="";
-		}
-		return "<input type='checkbox' name='".$name."' value='".$value."' ".$checked." >".$option;
-	}
+	
 	/**
 	 * Generate checkBox list.
 	 * @param string $name
@@ -349,9 +351,9 @@ class HtmlHelper{
 	 * @param string $callMethod
 	 */
 	public static function getActionUrl($actionName,$callMethod){
-		$url=AppConfig::$appHomeFromBrowserPath.$actionName.CommonResources::slash;
+		$url=AppConfig::$appHomeFromBrowserPath.$actionName;
 		if($callMethod!==null){
-			$url.=$callMethod;
+			$url.=CommonResources::slash.$callMethod;
 		}
 		return $url;
 	}

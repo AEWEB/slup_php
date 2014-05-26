@@ -119,6 +119,17 @@ interface DBController{
  * Interface for DB connection.
  */
 interface DBDriver{
+	
+	const queryOptionIndex_projection="projection";
+	const queryOptionIndex_condition="condition";
+	const queryOptionIndex_logic="logic";
+	const queryOptionIndex_val="val";
+	const queryOptionIndex_order="order";
+	const queryOptionIndex_limitStart="limitStart";
+	const queryOptionIndex_limitCount="limitCount";
+	const queryOptionIndex_update="update";
+	
+	
 	/**
 	 * start transaction.
 	 * トランザクションの開始
@@ -148,47 +159,65 @@ interface DBDriver{
 	 */
 	public function select($selectWord);
 	/**
+	 * construct where statement.
+	 * where文を生成する
+	 * @param ModelRunnable $model
+	 * @param string[] $options
+	 */
+	public function constructWhere($model,$options=null);
+	/**
+	 * construct order by statement.
+	 * order by 文を生成する
+	 * @param ModelRunnable $model
+	 * @param string[] $options
+	 */
+	public function constructOrder($model,$options=null);
+	/**
+	 * construct projection statement.
+	 * 射影構文を生成
+	 * @param ModelRunnable $model
+	 * @param string[] $options
+	 */
+	public function constructProjection($model,$options=null);
+	/**
+	 * construct limit statement.
+	 * limit文を生成
+	 * @param ModelRunnable $model
+	 * @param string[] $options
+	 */
+	public function constructLimit($model,$options=null);
+	
+	/**
 	 * to select.
 	 * 照会する
 	 * @param ModelRunnable $model
-	 * @param String[] $column
-	 * @param String $where
-	 * @param String $orderBy
-	 * @param int $limitStart
-	 * @param int $limitCount
+	 * @param String[] $options
 	 */
-	public function getSelectModel($model,$column,$where=null,$orderBy=null,$limitStart=0,$limitCount=30);
-	/**
-	 * @param string $where
-	 */
-	public function generateWhereClause($where);
+	public function getSelectModel($model,$options=null);
 	/**
 	 * @return ModelRunnable
 	 * @param string $selectWord
-	 * @param  $model
-	 * @param boolean $find
+	 * @param $model
 	 */
 	public function fetchModel($selectWord,$model);
 	/**
 	 * @param ModelRunnable $model
-	 * @param String[] $valuesList
-	 * @param String[] $columnList
+	 * @param String[] $options
 	 * @return boolean
 	 */
-	public function insert($model,$valuesList,$columnList=null);
+	public function insert($model,$options=null);
 	/**
 	 * @param ModelRunnable $model
-	 * @param String[] $updateList
-	 * @param String $where
+ 	* @param String $options
 	 * @return boolean
 	 */
-	public function update($model,$updateList,$where=null);
+	public function update($model,$options=null);
 	/**
 	 * @param ModelRunnable $model
-	 * @param String $where
+ 	* @param String $options
 	 * @return boolean
 	 */
-	public function delete($model,$where=null);
+	public function delete($model,$options=null);
 
 	/**
 	 * Set to queryable state.
@@ -200,6 +229,7 @@ interface DBDriver{
 	 * @param ModelRunnable
 	 */
 	public function getLastInsertId($model);
+	
 
 }
 /**
@@ -210,7 +240,6 @@ interface ModelRunnable{
 	 * @var String
 	 */
 	const valueIndex="value";
-	const findIndex="find";
 	const updateIndex="update";
 	
 	/**
@@ -246,8 +275,6 @@ interface ModelRunnable{
 	const equalsIndex = "equals";
 	
 	
-	const findColumnKey="findColumn_key";
-	
 	/**
 	 * index for storing method to run.
 	 */
@@ -259,6 +286,7 @@ interface ModelRunnable{
 	const formCols="form_cols";
 	const formRows="form_rows";
 	const formList="form_list";
+	const formValue="form_value";
 	const formIndexOption="form_option";
 	
 	/**
@@ -347,7 +375,7 @@ interface ModelRunnable{
 	/**
 	 * create model.
 	 * @return ModelRunnable
-	 * @param String[] data
+	 * @param Object data
 	 */
 	public static function createModel($data=null);
 	/**
@@ -379,58 +407,39 @@ interface ModelRunnable{
 	
 	/**
 	 * @param DBDriver $db
-	 * @param string $where
-	 * @param string $orderBy
-	 * @param int $limitStart
-	 * @param int $limitCount
+	 * @param ModelRunnable $model
+	 * @param String[] $options
 	 */
-	public static function find($db,$where=null,$orderBy=null,$limitStart=0,$limitCount=30);
-	/**
-	 * @param DBDriver $db
-	 * @param string $findColumn
-	 * @param string $where
-	 * @param string $orderBy
-	 * @param int $limitStart
-	 * @param int $limitCount
-	 */
-	public static function find_column($db,$findColumn,$where=null,$orderBy=null,$limitStart=0,$limitCount=30);
-	/**
-	 * @param DBDriver $db
-	 * @param string $whereColumn
-	 * @param string $val
-	 * @param string $addWhere
-	 * @param boolean $all
-	 */
-	public static function findBy($db,$whereColumn,$val,$addWhere=null,$all=false);
-	/**
- 	* @param DBDriver $db
-	 * @param string $as
-	 * @param string $id
-	 * @param string $subTable
-	 * @param string $where
-	 * @param boolean $all
-	 * @param int $limitStart
-	 * @param int $limitCount
-	 * @param string $add
-	 */
-	public static function findByRand($db,$as,$id,$subTable,$where,$all=false,$limitStart=0,$limitCount=30,$add="");
-	/**
-	 * @param DBDriver $db
-	 * @param string $where
-	 * @param string $countColumn
-	 */
-	public static function findByCount($db,$where=null,$countColumn=null);
+	public static function find($db,$model,$options=null);
+	
 	/**
 	 * @param DBDriver $db
 	 * @param ModelRunnable $model
+	 * @param String[] $options
+	 * @param String $as
+	 * @param String $id
+	 * @param String $subTable
+	 */
+	public static function findByRand($db,$model,$options,$as,$id,$subTable);
+	/**
+	 * @param DBDriver $db
+	 * @param ModelRunnable $model
+	 * @param string[] $options
+	 */
+	public static function findByCount($db,$model,$options=null);
+	/**
+	 * @param DBDriver $db
+	 * @param ModelRunnable $model
+	 * @return boolean
 	 */
 	public static function insert($db,$model);
 	/**
 	 * @param DBDriver $db
 	 * @param ModelRunnable $model
 	 * @param boolean $all
+	 * @return boolean
 	 */
-	public static function save($db,$model,$all=false);
+	public static function save($db,$model,$updateId=null,$all=false);
 	/**
 	 * @param DBDriver $db
 	 * @param ModelRunnable $model
@@ -607,7 +616,7 @@ interface ControllerRunnable extends DBController{
 	 * @param $time String
 	 * @return string
 	 */
-	 public function getActionForm($name,$callMethod,$method,$option,$model,$time);
+	 public function getActionForm($name,$callMethod,$method,$option,$model,$time=AppConfingRunnable::securityTime);
 	 /**
 	 * action form for ajax.
 	 * @param ModelRunnable $model
@@ -654,5 +663,50 @@ interface ControllerRunnable extends DBController{
 	 public static function getControllerName() ;
 	 
 }
+/**
+ *Interface for auth access class.
+ *認証アクセスクラスのためのインタフェース。
+ */
+interface AuthModel extends ModelRunnable{
+	/**
+	 * Run auth.
+	 * 認証を実行
+	 * @return AuthUser||null
+	 */
+	public static function runAuth() ;
+	/**
+	 * To check whether API can be use.
+	 * apiが使えるか
+	 * @return boolean
+	 */
+	public static function isApi() ;
+	/**
+	 * remove auth info.
+	 * 認証情報を消去
+	 * @return void
+	 */
+	public static function remove();
+	
+	/**
+	 * @return Object
+	 * @param string $url
+	 * @param string $param
+	 */
+	public static function getUrl($url ,$param);
+	/**
+	 * @return string
+	 */
+	public static function getIdIndex();
+	/**
+	 * @return string
+	 */
+	public static function getCareerId();
+	/**
+	 * @return string
+	 */
+	public static function getSaveIndex();
+}
+
+
 require_once AppConfig::$config->getLibPath()."module.php";
 ?>

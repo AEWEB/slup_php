@@ -6,13 +6,18 @@
 		}
 		public function initMock(){
 			$this->error=null;
-		}
+		}		
 	}
 
 	class Controller_mock extends Controller{
 	
 		public function getRootList(){
 			return array("test"=>"test");
+		}
+	
+		
+		public function test(){
+			return "testView";
 		}
 		
 		public function setup_test(){
@@ -46,6 +51,13 @@
 		public function getAppUrl_test(){
 			return $this->getAppUrl();
 		}
+		public function setAction_test($action){
+			$this->setAction($action);
+		}
+		public function setupNotSsl_test(){
+			$this->setupNotSsl();
+		}
+		
 	}
 	
 ?>

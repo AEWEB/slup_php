@@ -1,37 +1,29 @@
 <?php
-	class Redirector extends SlModel{
-		/**
-		 * @var string
-		 */
-		private $sessionId;
-		/**
-		 * @var string
-		 */
-		private $date;
+	class Redirector extends Model{
 		
-		/**
-		 * @var Redirector
-		 */
-		private static $column;
+		const session_id="session_id";
+		const date="date";
 		
-		/**
-		 * @return SlUser
-		 */
-		public static function createColumnModel(){
-			if(self::$column===null){
-				self::$column=parent::createColumnModel();
-			}
+		private static $column=null;
+		private static $list=array(self::id=>array(self::valueIndex=>"id"),
+			self::session_id=>array(self::valueIndex=>"session_id"),
+			self::date=>array(self::valueIndex=>"date"));
+
+		public static function getColumnArray(){
+			return self::$list;
+		}
+		public static function setColumnArray($list){
+			self::$list=$list;
+			self::$column=null;
+		}
+		public static function getColumn(){
 			return self::$column;
 		}
-		public static function getTable(){
-			return "redirector";
-		}
-		public static function getColumnArray(){
-			return array(
-					self::nameIndex=>array("id","sessionId","date"),
-					self::valueIndex=>array("id","session_id","date"),
-					self::valueSurroundIndex=>array(CommonResources::quote,CommonResources::quote,CommonResources::nullCharacter),
-					self::findIndex=>array(true,true,false));
+		/**
+		 * @param ModelRunnable $model
+		 */
+		public static function setColumn($model){
+			self::$column=$model;
 		}
 		
 		/**
@@ -41,39 +33,24 @@
 		 */
 		public static function setupRedirect($id,$db){
 			$db->startTransaction();
-			$column=static::createColumnModel();
-			if(count(($data=Redirector::findById($db, $id,SqlSyntax::getAnd().$column->getDate().CommonResources::rightLess.
-				CommonResources::equal.strtotime("now"))))>0){//データが存在する
-				session_id($data[0]->getSessionId());
-				//有効期限切れを全て削除
-				$db->delete($column,$column->getSessionId().CommonResources::equal.CommonResources::quote.
-					$data[0]->getSessionId().CommonResources::quote.SqlSyntax::getOr().$column->getDate().CommonResources::leftLess.strtotime("now"));
+			$column=static::createModel();
+			if(count(($data=Redirector::find($db,($model=Redirector::createModel(array(self::id=>$id))),
+				array(DBDriver::queryOptionIndex_condition=>array(0=>array(
+					DBDriver::queryOptionIndex_val=>$column->get(self::date).CommonResources::rightLess.CommonResources::equal.strtotime("now"),
+					DBDriver::queryOptionIndex_logic=>MySQLDriver::andSql))))))>0){
+				session_id($data[0]->get(self::session_id));
+				
+				$db->delete($model,array(
+					DBDriver::queryOptionIndex_condition=>array(0=>array(
+						DBDriver::queryOptionIndex_val=>$column->get(self::date).CommonResources::leftLess.CommonResources::equal.strtotime("now"),
+						DBDriver::queryOptionIndex_logic=>MySQLDriver::orSql
+					))));
 				$db->commit();
 			}else{
 				$db->rollback();
 			}
 		}
 		
-		/**
-		 * get session id
-		 * @return string
-		 */
-		public function getSessionId() {
-			return $this->sessionId;
-		}
-		/**
-		 * get date
-		 * @return string
-		 */
-		public function getDate(){
-			return $this->date;
-		}
-		public function setSessionId($sessionId){
-			$this->sessionId=$sessionId;
-		}
-		public function setDate($date){
-			$this->date=$date;
-		}
 		
 	}
 ?>

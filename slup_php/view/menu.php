@@ -2,7 +2,7 @@
 	 <ul id="contents_navi">
 	 	<li>
 	 		<a href="<?php 
-	 			print(HtmlHelper::getActionUrl("home",null));
+	 			print(HtmlHelper::getActionUrl("top",null));
 	 		?>">TOP</a>
 	 	</li>
 	 	<li>
@@ -13,7 +13,7 @@
 	 	</li>
 	 	<li>
 	 		<a href="<?php 
-	 			print(HtmlHelper::getActionUrl("home","showHelp"));
+	 			print(HtmlHelper::getActionUrl("top","showHelp"));
 	 		?>">ヘルプ</a>
 	 	</li>
 	 </ul>
