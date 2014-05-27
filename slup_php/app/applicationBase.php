@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 	abstract class ApplicationBase extends Controller{
 		/**
 	 	* constructor
@@ -26,7 +26,7 @@
 		}
 		protected function setupAuthFailure(){
 			if(!AppConfig::$config->isSsl()){
-				AppConfig::$config->redirectSsl();
+			//	AppConfig::$config->redirectSsl();
 			}
 		}
 		
