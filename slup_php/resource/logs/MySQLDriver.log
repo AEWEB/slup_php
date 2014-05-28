@@ -1,0 +1,405 @@
+2014/05/28 (Wed) 22:34:20 __ INFO __ ---------setup---------- DatabaseParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => aaa
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:20 __ INFO __ ---------setup---------- DatabaseParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => slc
+    [caracterCode:DatabaseParameter:private] => test
+)
+------------------------
+2014/05/28 (Wed) 22:34:20 __ INFO __ ---------setup---------- DatabaseParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => slc
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:20 __ INFO __ ---------setup---------- TestDBParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => test
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:20 __ INFO __ ---------setup---------- DatabaseParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => slc
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:20 __ INFO __ select * from sl_user where sl_id='sample'
+2014/05/28 (Wed) 22:34:20 __ INFO __ select * from sl_user where hoge='sample'
+2014/05/28 (Wed) 22:34:20 __ INFO __ ---------setup---------- TestDBParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => test
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:20 __ INFO __ ---------setup---------- TestDBParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => test
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:20 __ INFO __ select * from sl_user where sl_id='sample'
+2014/05/28 (Wed) 22:34:20 __ INFO __ select * from my_sample_datas where id='1'
+2014/05/28 (Wed) 22:34:20 __ INFO __ ---------setup---------- DatabaseParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => slc
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:20 __ INFO __ select * from sl_user where sl_id='sample'
+2014/05/28 (Wed) 22:34:20 __ INFO __ select * from my_sample_datas where id='1'
+2014/05/28 (Wed) 22:34:20 __ INFO __ ---------setup---------- TestDBParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => test
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:20 __ INFO __ update my_sample_datas set name='test' where id='1'
+2014/05/28 (Wed) 22:34:20 __ INFO __ select * from sl_user where sl_id='sample'
+2014/05/28 (Wed) 22:34:20 __ INFO __ select * from my_sample_datas where id='1'
+2014/05/28 (Wed) 22:34:20 __ INFO __ select * from my_sample_datas where id='1'
+2014/05/28 (Wed) 22:34:20 __ INFO __ ---------setup---------- DatabaseParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => slc
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:20 __ INFO __ ---------setup---------- DatabaseParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => slc
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:20 __ INFO __ select * from sl_user where sl_id='sample'
+2014/05/28 (Wed) 22:34:20 __ INFO __ ---------setup---------- TestDBParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => test
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:20 __ INFO __ insert into my_sample_datas (id,name,mail,tel) values(null,null,null,null)
+2014/05/28 (Wed) 22:34:20 __ INFO __ insert into my_sample_datas (id,name,mail,tel) values(null,null,'mail','tel')
+2014/05/28 (Wed) 22:34:20 __ INFO __ insert into my_sample_datas (id,name,mail,tel) values(null,'name','mail','tel')
+2014/05/28 (Wed) 22:34:20 __ INFO __ select last_insert_id() as id from my_sample_datas
+2014/05/28 (Wed) 22:34:20 __ INFO __ select * from my_sample_datas where id='2036'
+2014/05/28 (Wed) 22:34:20 __ INFO __ ---------setup---------- TestDBParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => test
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:20 __ INFO __ delete from my_sample_datas where id='1'
+2014/05/28 (Wed) 22:34:20 __ INFO __ select * from my_sample_datas where id='1'
+2014/05/28 (Wed) 22:34:20 __ INFO __ ---------setup---------- TestDBParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => test
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:20 __ INFO __ aaa
+2014/05/28 (Wed) 22:34:20 __ INFO __ ---------setup---------- TestDBParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => test
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:20 __ INFO __ update my_sample_datas set name='update',mail='update' where id='1'
+2014/05/28 (Wed) 22:34:20 __ INFO __ select * from my_sample_datas where id='1'
+2014/05/28 (Wed) 22:34:20 __ INFO __ ---------setup---------- TestDBParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => test
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:20 __ INFO __ select * from my_sample_datas where id='1'
+2014/05/28 (Wed) 22:34:20 __ INFO __ select count(*) as modelCount from my_sample_datas
+2014/05/28 (Wed) 22:34:20 __ INFO __ select * from my_sample_datas
+2014/05/28 (Wed) 22:34:21 __ INFO __ select count(id) as modelCount from my_sample_datas where id='1'
+2014/05/28 (Wed) 22:34:21 __ INFO __ insert into my_sample_datas (id,name,mail,tel) values(null,'name','mail','tel')
+2014/05/28 (Wed) 22:34:21 __ INFO __ select last_insert_id() as id from my_sample_datas
+2014/05/28 (Wed) 22:34:21 __ INFO __ select * from my_sample_datas where id='2037'
+2014/05/28 (Wed) 22:34:21 __ INFO __ ---------setup---------- TestDBParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => test
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:21 __ INFO __ update my_sample_datas set name='name',mail='update',tel='tel' where id='1'
+2014/05/28 (Wed) 22:34:21 __ INFO __ select * from my_sample_datas where id='1'
+2014/05/28 (Wed) 22:34:21 __ INFO __ ---------setup---------- TestDBParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => test
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:21 __ INFO __ delete from my_sample_datas where id='1'
+2014/05/28 (Wed) 22:34:21 __ INFO __ select * from my_sample_datas where id='1'
+2014/05/28 (Wed) 22:34:21 __ INFO __ ---------setup---------- DatabaseParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => slc
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:21 __ INFO __ insert into redirector (id,session_id,date) values('6053adb790e47517368b531bfcde7651','5t6ll2ps2kect7vj806vp9hjs4','1401284081')
+2014/05/28 (Wed) 22:34:21 __ INFO __ select * from redirector where id='6053adb790e47517368b531bfcde7651'
+2014/05/28 (Wed) 22:34:21 __ INFO __ ---------setup---------- DatabaseParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => slc
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:21 __ INFO __ select * from redirector where id='6053adb790e47517368b531bfcde7651' and date>=1401284061
+2014/05/28 (Wed) 22:34:21 __ INFO __ delete from redirector where id='6053adb790e47517368b531bfcde7651' or date<=1401284061
+2014/05/28 (Wed) 22:34:21 __ INFO __ select * from redirector where id='6053adb790e47517368b531bfcde7651'
+2014/05/28 (Wed) 22:34:21 __ INFO __ select * from sl_user where sl_id='-1' and sl_password='098f6bcd4621d373cade4e832627b4f6' and sl_restriction<5
+2014/05/28 (Wed) 22:34:21 __ INFO __ select * from sl_user where sl_id='sample' and sl_password='74b87337454200d4d33f80c4663dc5e5' and sl_restriction<5
+2014/05/28 (Wed) 22:34:21 __ INFO __ ---------setup---------- DatabaseParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => slc
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:21 __ INFO __ select * from sl_user where sl_id='sample'
+2014/05/28 (Wed) 22:34:21 __ INFO __ update sl_user set sl_name='test',sl_imageurl='default.png',sl_password='098f6bcd4621d373cade4e832627b4f6',sl_restriction='5',sl_device='0' where sl_id='sample'
+2014/05/28 (Wed) 22:34:21 __ INFO __ select * from sl_user where sl_id='sample' and sl_password='098f6bcd4621d373cade4e832627b4f6' and sl_restriction<5
+2014/05/28 (Wed) 22:34:21 __ INFO __ select * from sl_user where sl_id='sample' and sl_password='098f6bcd4621d373cade4e832627b4f6' and sl_restriction<5
+2014/05/28 (Wed) 22:34:21 __ INFO __ select * from sl_user where sl_id='sample' and sl_restriction<5
+2014/05/28 (Wed) 22:34:21 __ INFO __ select * from sl_user where sl_id='sample' and sl_password='098f6bcd4621d373cade4e832627b4f6' and sl_restriction<5
+2014/05/28 (Wed) 22:34:21 __ INFO __ select * from sl_user where sl_id='sample' and sl_restriction<5
+2014/05/28 (Wed) 22:34:21 __ INFO __ select * from sl_user where sl_id='___****' and sl_restriction<5
+2014/05/28 (Wed) 22:34:21 __ INFO __ select * from sl_user where sl_id='sample' and sl_password='098f6bcd4621d373cade4e832627b4f6' and sl_restriction<5
+2014/05/28 (Wed) 22:34:21 __ INFO __ select * from sl_user where sl_id='sample' and sl_restriction<5
+2014/05/28 (Wed) 22:34:21 __ INFO __ select * from sl_user where sl_id='sample' and sl_password='098f6bcd4621d373cade4e832627b4f6' and sl_restriction<5
+2014/05/28 (Wed) 22:34:21 __ INFO __ select * from sl_user where sl_id='sample' and sl_restriction<5
+2014/05/28 (Wed) 22:34:21 __ INFO __ select * from sl_user where sl_id='sample' and sl_password='098f6bcd4621d373cade4e832627b4f6' and sl_restriction<5
+2014/05/28 (Wed) 22:34:21 __ INFO __ select * from sl_user where sl_id='sample' and sl_restriction<5
+2014/05/28 (Wed) 22:34:21 __ INFO __ select * from sl_user where sl_id='___****' and sl_restriction<5
+2014/05/28 (Wed) 22:34:21 __ INFO __ select * from sl_user where sl_id='sample' and sl_password='098f6bcd4621d373cade4e832627b4f6' and sl_restriction<5
+2014/05/28 (Wed) 22:34:21 __ INFO __ select * from sl_user where sl_id='sample' and sl_restriction<5
+2014/05/28 (Wed) 22:34:21 __ INFO __ ---------setup---------- DatabaseParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => slc
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:21 __ INFO __ update sl_user set sl_name='test',sl_imageurl='default.png',sl_password='098f6bcd4621d373cade4e832627b4f6',sl_restriction='5',sl_device='0' where sl_id='sample'
+2014/05/28 (Wed) 22:34:21 __ INFO __ select * from sl_user where sl_id='sample' and sl_restriction<5
+2014/05/28 (Wed) 22:34:21 __ INFO __ ---------setup---------- DatabaseParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => slc
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:21 __ INFO __ ---------setup---------- DatabaseParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => slc
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:21 __ INFO __ select * from redirector where id='6053adb790e47517368b531bfcde7651' and date>=1401284061
+2014/05/28 (Wed) 22:34:21 __ INFO __ select * from sl_user where sl_id='aaaaaaa' and sl_password='e09c80c42fda55f9d992e59ca6b3307d' and sl_restriction<5
+2014/05/28 (Wed) 22:34:21 __ INFO __ select * from sl_user where sl_id='sample' and sl_password='098f6bcd4621d373cade4e832627b4f6' and sl_restriction<5
+2014/05/28 (Wed) 22:34:21 __ INFO __ select * from sl_user where sl_id='sample' and sl_restriction<5
+2014/05/28 (Wed) 22:34:21 __ INFO __ ---------setup---------- DatabaseParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => slc
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:21 __ INFO __ delete from sl_user where sl_restriction='15' and sl_date<=now()
+2014/05/28 (Wed) 22:34:21 __ INFO __ select * from sl_user where sl_m_id='test@sl.jp'
+2014/05/28 (Wed) 22:34:21 __ INFO __ ---------setup---------- DatabaseParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => slc
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:21 __ INFO __ delete from sl_user where sl_restriction='15' and sl_date<=now()
+2014/05/28 (Wed) 22:34:21 __ INFO __ select * from sl_user where sl_m_id='expsei2@inter7.jp'
+2014/05/28 (Wed) 22:34:21 __ INFO __ insert into sl_user (sl_id,sl_name,sl_imageurl,sl_password,sl_restriction,sl_date,sl_m_id,sl_device) values('98544c1b0a34da9627a7','temp','../../resource/image/default.png','temp','15','2014/05/29 22:34:21','expsei2@inter7.jp','0')
+2014/05/28 (Wed) 22:34:22 __ INFO __ ---------setup---------- DatabaseParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => slc
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:22 __ INFO __ delete from sl_user where sl_restriction='15' and sl_date<=now()
+2014/05/28 (Wed) 22:34:22 __ INFO __ select * from sl_user where sl_id='98544c1b0a34da9627a7' and sl_restriction='15'
+2014/05/28 (Wed) 22:34:22 __ INFO __ ---------setup---------- DatabaseParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => slc
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:22 __ INFO __ delete from sl_user where sl_restriction='15' and sl_date<=now()
+2014/05/28 (Wed) 22:34:22 __ INFO __ select * from sl_user where sl_id='98544c1b0a34da9627a7' and sl_restriction='15'
+2014/05/28 (Wed) 22:34:22 __ INFO __ ---------setup---------- DatabaseParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => slc
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:22 __ INFO __ delete from sl_user where sl_restriction='15' and sl_date<=now()
+2014/05/28 (Wed) 22:34:22 __ INFO __ select * from sl_user where sl_id='98544c1b0a34da9627a7' and sl_restriction='15'
+2014/05/28 (Wed) 22:34:22 __ INFO __ ---------setup---------- DatabaseParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => slc
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:22 __ INFO __ delete from sl_user where sl_restriction='15' and sl_date<=now()
+2014/05/28 (Wed) 22:34:22 __ INFO __ select * from sl_user where sl_id='98544c1b0a34da9627a7' and sl_restriction='15'
+2014/05/28 (Wed) 22:34:22 __ INFO __ ---------setup---------- DatabaseParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => slc
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:22 __ INFO __ delete from sl_user where sl_restriction='15' and sl_date<=now()
+2014/05/28 (Wed) 22:34:22 __ INFO __ select * from sl_user where sl_id='98544c1b0a34da9627a7' and sl_restriction='15'
+2014/05/28 (Wed) 22:34:22 __ INFO __ ---------setup---------- DatabaseParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => slc
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:22 __ INFO __ delete from sl_user where sl_restriction='15' and sl_date<=now()
+2014/05/28 (Wed) 22:34:22 __ INFO __ select * from sl_user where sl_id='98544c1b0a34da9627a7' and sl_restriction='15'
+2014/05/28 (Wed) 22:34:22 __ INFO __ ---------setup---------- DatabaseParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => slc
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:22 __ INFO __ delete from sl_user where sl_restriction='15' and sl_date<=now()
+2014/05/28 (Wed) 22:34:22 __ INFO __ select * from sl_user where sl_id='98544c1b0a34da9627a7' and sl_restriction='15'
+2014/05/28 (Wed) 22:34:22 __ INFO __ ---------setup---------- DatabaseParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => slc
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:22 __ INFO __ delete from sl_user where sl_restriction='15' and sl_date<=now()
+2014/05/28 (Wed) 22:34:22 __ INFO __ select * from sl_user where sl_id='98544c1b0a34da9627a7' and sl_restriction='15'
+2014/05/28 (Wed) 22:34:22 __ INFO __ select * from sl_user where sl_id='sample'
+2014/05/28 (Wed) 22:34:22 __ INFO __ ---------setup---------- DatabaseParameter Object
+(
+    [serverName:DatabaseParameter:private] => localhost
+    [userName:DatabaseParameter:private] => root
+    [password:DatabaseParameter:private] => sohara
+    [dbName:DatabaseParameter:private] => slc
+    [caracterCode:DatabaseParameter:private] => utf8
+)
+------------------------
+2014/05/28 (Wed) 22:34:22 __ INFO __ delete from sl_user where sl_restriction='15' and sl_date<=now()
+2014/05/28 (Wed) 22:34:22 __ INFO __ select * from sl_user where sl_id='98544c1b0a34da9627a7' and sl_restriction='15'
+2014/05/28 (Wed) 22:34:22 __ INFO __ select * from sl_user where sl_id='sohara_10169022test'
+2014/05/28 (Wed) 22:34:22 __ INFO __ update sl_user set sl_id='sohara_10169022test',sl_name='sohara_10169022test',sl_imageurl='../../resource/image/default.png',sl_password='098f6bcd4621d373cade4e832627b4f6',sl_restriction='0',sl_device='0' where sl_id='98544c1b0a34da9627a7'
+2014/05/28 (Wed) 22:34:22 __ INFO __ select * from sl_user where sl_id='sohara_10169022test' and sl_restriction<5
+2014/05/28 (Wed) 22:34:22 __ INFO __ delete from sl_user where sl_id='sohara_10169022test'
