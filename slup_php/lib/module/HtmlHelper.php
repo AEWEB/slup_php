@@ -15,6 +15,8 @@ class HtmlHelper{
 	const textArea="textArea";
 	const password="password";
 	const checkBox="checkBox";
+	const radio="radio";
+	const select="select";
 	
 	
 	/**
@@ -54,7 +56,7 @@ class HtmlHelper{
 	 * @return string
 	 */
 	public static function textArea($name,$value,$option){
-		return "<textarea cols=\"".(isset($option[ModelRunnable::formCols]) ? $option[ModelRunnable::formCols]:"5").
+		return "<textarea cols=\"".(isset($option[ModelRunnable::formCols]) ? $option[ModelRunnable::formCols]:"40").
 			"\" rows=\"".(isset($option[ModelRunnable::formRows]) ? $option[ModelRunnable::formRows]:"10").
 			"\" name=\"".$name."\" ".
 			(isset($option[ModelRunnable::formIndexOption]) ? $option[ModelRunnable::formIndexOption]:CommonResources::nullCharacter).">".$value."</textarea>";
@@ -69,31 +71,52 @@ class HtmlHelper{
 	public static function checkBox($name,$value,$option){
 		return "<input type='checkbox' name='".$name."' value='".
 			$option[ModelRunnable::equalsIndex]."' ".
+			(isset($option[ModelRunnable::formIndexOption]) ? $option[ModelRunnable::formIndexOption]:CommonResources::nullCharacter)." ".
 			($value===$option[ModelRunnable::equalsIndex]?"checked":CommonResources::nullCharacter)." >".
-			(isset($option[ModelRunnable::formIndexOption]) ? $option[ModelRunnable::formIndexOption]:CommonResources::nullCharacter);
+			(isset($option[ModelRunnable::formOutput]) ? $option[ModelRunnable::formOutput]:CommonResources::nullCharacter);
 	}
-	
-	
-	
 	/**
-	 * Generate radio input tag.
-	  * @param string $name input name.
-	 * @param string $value value.
-	 * @param string $option other.
+	 * @param String $name
+	 * @param String $value
+	 * @param String[] $option
 	 * @return string
 	 */
-	public static function radio($name,$value,$option,$header,$footer){
-		$list=$option[ModelRunnable::formList];
-		$tag=$header;
-		for($i=0;$i<count($list);$i++){
+	public static function radio($name,$value,$option){
+		$list=$option[ModelRunnable::formList];		
+		$tag=CommonResources::nullCharacter;
+		if($value==null){
+			$value=(isset($option[ModelRunnable::formListDefault])?$option[ModelRunnable::formListDefault]:"0");
+		}
+		foreach ($list as $key => $values){
 			$checked=CommonResources::nullCharacter;
-			if($value===$list[$i][self::value]){
+			if($value==$key){
 				$checked="checked";
 			}
-			$tag.="<INPUT TYPE='radio' name='".$formName."' VALUE='".
-				$list[$i][self::value]."'".$list[$i][self::option].">".$list[$i][self::output];
+			$tag.="<INPUT TYPE='radio' name='".$name."' VALUE='".
+				$key."' ".$checked.$values[ModelRunnable::formListOption].">".$values[ModelRunnable::formOutput];
+		}		
+		return $tag;
+	}
+	/**
+	 * @param string $name
+	 * @param string $value
+	 * @param string $option
+	 * @return string
+	 */
+	public static function select($name,$value,$option){
+		$select="<select name=\"".$name."\" ".(isset($option[ModelRunnable::formIndexOption])?$option[ModelRunnable::formIndexOption]:CommonResources::nullCharacter).">";
+		$list=$option[ModelRunnable::formList];
+		if($value==null){
+			$value=(isset($option[ModelRunnable::formListDefault])?$option[ModelRunnable::formListDefault]:"0");
 		}
-		return $tag.$footer;
+		foreach ($list as $key => $values){
+			$selected=CommonResources::nullCharacter;
+			if($value==$key){
+				$selected="selected";
+			}
+			$select.="<option value=\"".$key."\" ".$selected.">".$values[ModelRunnable::formOutput];
+		}
+		return $select."</select>";
 	}
 	/**
 	 * Get param list for radio button.
@@ -104,31 +127,12 @@ class HtmlHelper{
 	 */
 	public static function getSexRadioParam($option,$manJpName,$womanJpName){
 		return array(
-			array(self::value=>self::form_sexMan,
-				self::output=>$manJpName,
-				self::option=>" id='idSex_".self::form_sexMan."'".$option),
-			array(self::value=>self::form_sexWoman,
-				self::output=>$womanJpName,
-				self::option=>" id='idSex_".self::form_sexWoman."'".$option));	
+			self::form_sexMan=>array(ModelRunnable::formOutput=>$manJpName,
+				ModelRunnable::formListOption=>" id='idSex_".self::form_sexMan."'".$option),
+			self::form_sexWoman=>array(ModelRunnable::formOutput=>$womanJpName,
+				ModelRunnable::formListOption=>" id='idSex_".self::form_sexWoman."'".$option));	
 	}
-	/**
-	 * Generate select tag.
-	 * @param string[][] $list
-	 * @param string $name
-	 * @param string $option
-	 * @return string
-	 */
-	public static function select($name,$value,$option){
-		$select="<select name=\"".$name."\" ".$option.">";
-		for($i=0;$i<count($list);$i++){
-			$selected=CommonResources::nullCharacter;
-			if($value===$list[$i][self::formList_index_value]){
-				$selected="selected";
-			}
-			$select.="<option value=\"".$list[$i][self::formList_index_value]."\" ".">".$list[$i][self::output];
-		}
-		return $select."</select>";
-	}
+	
 	/**
 	 * テスト前
 	 */

@@ -10,7 +10,7 @@
 	 	</li>
 	 	<li>
 	 		<a href="<?php 
-	 			print(HtmlHelper::getActionUrl("option",null));
+	 			print(HtmlHelper::getActionUrl("image",null));
 	 			?>">画像フォルダ</a>
 	 	</li>
 	 	<li>

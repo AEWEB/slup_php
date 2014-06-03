@@ -225,9 +225,6 @@ abstract class Model extends ModuleBase implements ModelRunnable{
 		 * @return mixed|NULL
 		 */
 		protected static function generateForm($name,$param,$model){
-		#	print("---------<br/>");
-		#	print_r($param);
-		#	print("---------<br/>");
 			if(isset($param[self::formIndex])){
 				return call_user_func_array(array("HtmlHelper",$param[self::formIndex]),array(static::parseFormName($name),$model->get($name),$param));
 			}else{
@@ -235,6 +232,20 @@ abstract class Model extends ModuleBase implements ModelRunnable{
 			}
 		}
 		
+		/**
+		 * @see ModelRunnable
+		 * No test.
+		 */
+		public static function resetGenerateForm($model,$name=null){
+			$list=static::getColumnArray();
+			if($name!==null){
+				$model->set(static::parseFormName($name),static::generateForm($name,$list[$name], $model));
+				return;
+			}
+			foreach ($list as $key => $value){
+				$model->set(static::parseFormName($key),static::generateForm($key,$list[$key], $model));
+			}
+		}
 		
 		/**
 		 * @see ModelRunnable
@@ -410,7 +421,7 @@ abstract class Model extends ModuleBase implements ModelRunnable{
 	 	* 最初のアクセスか
 	 	* @return boolean
 	 	*/
-		protected static function isFirstAccess(){
+		public static function isFirstAccess(){
 			return !static::isErrorItem(self::security);
 		}
 		/**

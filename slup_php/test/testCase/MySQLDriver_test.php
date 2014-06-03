@@ -134,14 +134,17 @@
 		$this->getControl()->equals($this->db->constructOrder(My_sample_datas::createModel(array())), CommonResources::nullCharacter);
 		//オーダーby句
 		$this->getControl()->equals($this->db->constructOrder(My_sample_datas::createModel(array()),
-			array(DBDriver::queryOptionIndex_order=>"date desc"))," order by date desc");
+			array(DBDriver::queryOptionIndex_order=>array(
+				array(DBDriver::queryOptionIndex_order_column=>My_sample_datas::id,DBDriver::queryOptionIndex_order_value=>DBDriver::desc),
+				array(DBDriver::queryOptionIndex_order_column=>My_sample_datas::mail)))),
+			" order by id desc,mail asc");
 	}
 	public function testConstructProjection(){
 		//なし
 		$this->getControl()->equals($this->db->constructProjection(My_sample_datas::createModel(array())), "*");
 		//射影有
 		$this->getControl()->equals($this->db->constructProjection(My_sample_datas::createModel(array()),
-				array(DBDriver::queryOptionIndex_projection=>"id,tel")),"id,tel");
+				array(DBDriver::queryOptionIndex_projection=>array(My_sample_datas::id,My_sample_datas::tel))),"id,tel");
 	}
 	public function testConstructLimit(){
 		//なし

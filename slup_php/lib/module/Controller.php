@@ -360,8 +360,9 @@ abstract class Controller extends ModuleBase implements ControllerRunnable{
 	/**
 	 * @see ControllerRunnable::getAjaxActionForm()
 	 */
-	public function getAjaxActionForm($model){
-		return HtmlHelper::input("hidden",$model::parseFormName(ModelRunnable::security),$model->get(ModelRunnable::security),"id='".$model::parseFormName(ModelRunnable::security)."'");
+	public function getAjaxActionForm($model,$time=AppConfigRunnable::securityTime){
+		$model->setupSecurity($time, $model);
+		return $model->get($model->parseFormName(ModelRunnable::security));
 	}
 	
 	/**
@@ -386,7 +387,7 @@ abstract class Controller extends ModuleBase implements ControllerRunnable{
 	 * @see ControlllerRunnable::getOutput()
 	 */
 	public function getOutput(){//Get file for output.
-		return $this->getViewPath()."view.php";
+		return HtmlHelper::isAjax()?$this->getAjaxOutput():$this->getViewPath()."view.php";
 	}
 	/**
 	 * @see ControlllerRunnable::getAjaxOutput()

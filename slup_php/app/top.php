@@ -1,5 +1,4 @@
 <?php
-	AppConfig::includeModel(array("Sl_user"));
 	class TopController extends ApplicationBase{
 		
 		/**
@@ -284,10 +283,7 @@
 				"showHelp"=>"showHelp","reissueId"=>"reissueId","reissuePassword"=>"reissuePassword","reissuePasswordComplete"=>"reissuePasswordComplete",
 				"twitterAuth"=>"twitterAuth","facebookAuth"=>"facebookAuth");
 		}
-		public function createDBDriver(){
-			global $dbParameter_0;
-			$this->setDB(ControllerRunnable::basicDbIndex,new MySQLDriver($dbParameter_0,$this));
-		}
+		
 		public function printCss(){
 			print("<link rel='stylesheet' href='".AppConfig::getResourcePathFromBrowser()."css/login.css' type='text/css' />");
 		}

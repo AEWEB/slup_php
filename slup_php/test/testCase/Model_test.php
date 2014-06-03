@@ -32,7 +32,7 @@ class Model_test extends Lf_testCase{
 		$model=My_sample_datas::find($this->db,My_sample_datas::createModel(array()));
 		$this->getControl()->equals(count($model),(int)$count);
 		$this->getControl()->equals(1,(int)My_sample_datas::findByCount($this->db,
-			My_sample_datas::createModel(array(My_sample_datas::id=>My_sample_datas::idValue)),array(DBDriver::queryOptionIndex_projection=>My_sample_datas::createModel()->get(My_sample_datas::id))));
+			My_sample_datas::createModel(array(My_sample_datas::id=>My_sample_datas::idValue)),array(DBDriver::queryOptionIndex_projection=>array(My_sample_datas::id))));
 	}
 	
 

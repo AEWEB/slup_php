@@ -65,6 +65,10 @@
 		public static function getColumn(){
 			return self::$column;
 		}
+		public static function setColumnArray($list){
+			self::$list=$list;
+		}
+		
 		/**
 		 * @param ModelRunnable $model
 		 */

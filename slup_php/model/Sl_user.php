@@ -79,6 +79,7 @@ class Sl_user extends Model{
 			self::typeIndex=>self::validation_equals,
 			self::formIndex=>HtmlHelper::checkBox,
 			self::updateIndex=>false,
+			self::formIndexOption=>"id='label_".self::consentCheck."'",
 			self::equalsIndex=>self::consentCheck_equals);
 		self::$list[self::passwordConfirmation]=static::getPasswordConfirmationList();
 		self::$column=null;

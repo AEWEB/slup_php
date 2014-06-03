@@ -128,6 +128,10 @@ interface DBDriver{
 	const queryOptionIndex_limitStart="limitStart";
 	const queryOptionIndex_limitCount="limitCount";
 	const queryOptionIndex_update="update";
+	const queryOptionIndex_order_column="order_column";
+	const queryOptionIndex_order_value="order_value";
+	const asc="asc";
+	const desc="desc";
 	
 	
 	/**
@@ -286,7 +290,9 @@ interface ModelRunnable{
 	const formCols="form_cols";
 	const formRows="form_rows";
 	const formList="form_list";
-	const formValue="form_value";
+	const formOutput="form_output";
+	const formListOption="form_list_option";
+	const formListDefault="default";
 	const formIndexOption="form_option";
 	
 	/**
@@ -447,6 +453,12 @@ interface ModelRunnable{
 	public static function delete($db,$model);
 	
 	/**
+	 * @param String $name
+	 * @param ModelRunnable $model
+	 */
+	public static function resetGenerateForm($model,$name=null);
+	
+	/**
 	 * フォームチェック
 	 */
 		/** 
@@ -461,6 +473,10 @@ interface ModelRunnable{
 		 * @return boolean
 		 */
 		public static function isValidation();
+		/**
+		 * @return boolean
+		 */
+		public static function isFirstAccess();
 		/**
 		 * @param string $key
 		 * @return string
@@ -618,11 +634,11 @@ interface ControllerRunnable extends DBController{
 	 */
 	 public function getActionForm($name,$callMethod,$method,$option,$model,$time=AppConfingRunnable::securityTime);
 	 /**
-	 * action form for ajax.
-	 * @param ModelRunnable $model
-	 * @return string
-	 */
-	 public function getAjaxActionForm($model);
+	  * @param ModelRunnable $model
+	  * @param String $time
+	  * @return string
+	  */
+	 public function getAjaxActionForm($model,$time=AppConfigRunnable::securityTime);
 	 /**
 	 * Get URL for applications in used JavaScript.
 	 * Jsで使うアプリケーションURL

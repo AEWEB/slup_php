@@ -92,14 +92,17 @@ class MySQLDriver extends ModuleBase implements DBDriver{
 	public function startTransaction(){
 		$this->setup();
 		mysql_query("START TRANSACTION",$this->connect);
+		$this->log("----START TRANSACTION---");
 		$this->transactionFlag=true;
 	}
 	public function commit(){
 		mysql_query("commit",$this->connect);
+		$this->log("----Commit---");
 		$this->transactionFlag=false;
 	}
 	public function rollback(){
 		mysql_query("rollback",$this->connect);
+		$this->log("----rollback----");
 		$this->transactionFlag=false;
 	}
 	public function query($queryWord){
@@ -190,13 +193,28 @@ class MySQLDriver extends ModuleBase implements DBDriver{
 	 * @see DBDriver::constructOrder()
 	 */
 	public function constructOrder($model,$options=null){
-		return isset($options[DBDriver::queryOptionIndex_order]) ? " order by ".$options[DBDriver::queryOptionIndex_order]:CommonResources::nullCharacter;
+		if(isset($options[DBDriver::queryOptionIndex_order])){
+			$columnModel=$model->createModel();
+			for($i=0;$i<count($options[DBDriver::queryOptionIndex_order]);$i++){
+				$list[]=$columnModel->get($options[DBDriver::queryOptionIndex_order][$i][DBDriver::queryOptionIndex_order_column]).
+					CommonResources::space.(isset($options[DBDriver::queryOptionIndex_order][$i][DBDriver::queryOptionIndex_order_value])?$options[DBDriver::queryOptionIndex_order][$i][DBDriver::queryOptionIndex_order_value]:DBDriver::asc);
+			}
+			return " order by ".implode(",",$list);
+		}
+		return CommonResources::nullCharacter;
 	}
 	/**
 	 * @see DBDriver::constructProjection()
 	 */
 	public function constructProjection($model,$options=null){
-		return isset($options[DBDriver::queryOptionIndex_projection]) ? $options[DBDriver::queryOptionIndex_projection]:"*";
+		if(isset($options[DBDriver::queryOptionIndex_projection])){
+			$columnModel=$model->createModel();
+			for($i=0;$i<count($options[DBDriver::queryOptionIndex_projection]);$i++){
+				$list[]=$columnModel->get($options[DBDriver::queryOptionIndex_projection][$i]);
+			}
+			return implode(",", $list);
+		}
+		return CommonResources::asterisk;
 	}
 		
 	/**
