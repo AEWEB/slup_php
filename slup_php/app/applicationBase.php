@@ -1,5 +1,6 @@
 ﻿<?php
 	AppConfig::includeModel(array("Sl_user"));
+
 	abstract class ApplicationBase extends Controller{
 		/**
 	 	* constructor
